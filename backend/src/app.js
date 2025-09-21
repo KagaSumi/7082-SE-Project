@@ -1,4 +1,5 @@
 const express = require('express');
+const userRouter = require('./routes/user-router');
 
 const app = express();
 
@@ -12,8 +13,7 @@ app.use((err, req, res, next) => {
     res.status(500).send("Something broke!");
 })
 
-app.get("/", (req, res) => {
-    res.send("Hey, request received.");
-});
+// Route setup
+app.use('/api/users', userRouter);
 
 module.exports = app;
