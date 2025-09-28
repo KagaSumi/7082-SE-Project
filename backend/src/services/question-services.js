@@ -61,7 +61,7 @@ class QuestionService {
         return result;
     }
 
-    async getAllQuestions(data) {
+    async getAllQuestions() {
         try {
             console.log(`Get all questions with optional search filter...`);
 
