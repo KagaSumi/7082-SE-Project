@@ -1,12 +1,10 @@
-function sleep(ms) {
-    return new Promise(resolve => setTimeout(resolve, ms));
-}
+const genericHelper = require("../helper-functions/generic-helper");
 
 class UserService {
     async createUser(data) {
         try {
             console.log(`Creating user ${data}`);
-            await sleep(2000);
+            await genericHelper.sleep(2000);
         } catch (err) {
             throw new Error(err.message);
         }
@@ -15,7 +13,7 @@ class UserService {
     async getUser(uid) {
         try {
             console.log(`Getting user ${uid}`);
-            await sleep(2000);
+            await genericHelper.sleep(2000);
         } catch (err) {
             throw new Error(err.message);
         }
