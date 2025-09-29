@@ -115,6 +115,12 @@ class QuestionService {
             throw new Error(err.message);
         }
 
+        const index = dummyDB.questions.findIndex(question => question.questionId == data.questionId);
+        
+        if (index != -1) {
+          dummyDB.questions.splice(index, 1);
+        }
+
         return {
             "success": true,
             "message": "Successfully deleted."
