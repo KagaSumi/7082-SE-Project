@@ -44,16 +44,17 @@ class QuestionService {
             throw new Error(err.message);
         }
 
-        result;
+        let result = {"answers": []};
 
         for (const question of dummyDB.questions) {
-            if (question.questionId === data.questionId) {
-                result = question;
+            if (question.questionId == data.questionId) {
+                result = {...question, "answers": []};
+                break;
             }
         }
 
         for (const answer of dummyDB.answers) {
-            if (answer.questionId === data.questionId) {
+            if (answer.questionId == data.questionId) {
                 result["answers"].push(answer);
             }
         }

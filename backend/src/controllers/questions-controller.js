@@ -14,8 +14,10 @@ class QuestionController {
     }
 
     getSingleQuestion(req, res) {
+        const {questionId} = req.params;
+
         questionService
-        .getSingleQuestion({"questionId": req.params})
+        .getSingleQuestion({"questionId": questionId})
         .then((question) => {
             res.json(question);
         })
