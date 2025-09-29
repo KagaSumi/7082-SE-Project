@@ -2,6 +2,7 @@ const DummyDB = {
     questions: [
    {
       "questionId":1,
+      "title": "title 1",
       "content":"Donec dapibus. Duis at velit eu est congue elementum.",
       "upVotes":1,
       "downVotes":1,
@@ -13,6 +14,7 @@ const DummyDB = {
    },
    {
       "questionId":2,
+      "title": "title 2",
       "content":"Curabitur convallis. Duis consequat dui nec nisi volutpat eleifend. Donec ut dolor. Morbi vel lectus in quam fringilla rhoncus. Mauris enim leo, rhoncus sed, vestibulum sit amet, cursus id, turpis. Integer aliquet, massa id lobortis convallis, tortor risus dapibus augue, vel accumsan tellus nisi eu orci.",
       "upVotes":2,
       "downVotes":2,
@@ -24,6 +26,7 @@ const DummyDB = {
    },
    {
       "questionId":3,
+      "title": "title 3",
       "content":"Nulla nisl. Nunc nisl. Duis bibendum, felis sed interdum venenatis, turpis enim blandit mi, in porttitor pede justo eu massa.",
       "upVotes":3,
       "downVotes":3,
@@ -35,6 +38,7 @@ const DummyDB = {
    },
    {
       "questionId":4,
+      "title": "title 4",
       "content":"Cras in purus eu magna vulputate luctus. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus.",
       "upVotes":4,
       "downVotes":4,
@@ -46,6 +50,7 @@ const DummyDB = {
    },
    {
       "questionId":5,
+      "title": "title 5",
       "content":"Pellentesque ultrices mattis odio. Donec vitae nisi. Nam ultrices, libero non mattis pulvinar, nulla pede ullamcorper augue, a suscipit nulla elit ac nulla. Sed vel enim sit amet nunc viverra dapibus. Nulla suscipit ligula in lacus. Curabitur at ipsum ac tellus semper interdum.",
       "upVotes":5,
       "downVotes":5,
@@ -57,6 +62,7 @@ const DummyDB = {
    },
    {
       "questionId":6,
+      "title": "title 6",
       "content":"Nam congue, risus semper porta volutpat, quam pede lobortis ligula, sit amet eleifend pede libero quis orci. Nullam molestie nibh in lectus. Pellentesque at nulla. Suspendisse potenti. Cras in purus eu magna vulputate luctus.",
       "upVotes":6,
       "downVotes":6,
@@ -68,6 +74,7 @@ const DummyDB = {
    },
    {
       "questionId":7,
+      "title": "title 7",
       "content":"Etiam vel augue. Vestibulum rutrum rutrum neque. Aenean auctor gravida sem. Praesent id massa id nisl venenatis lacinia.",
       "upVotes":7,
       "downVotes":7,
@@ -79,6 +86,7 @@ const DummyDB = {
    },
    {
       "questionId":8,
+      "title": "title 8",
       "content":"Morbi sem mauris, laoreet ut, rhoncus aliquet, pulvinar sed, nisl. Nunc rhoncus dui vel sem.",
       "upVotes":8,
       "downVotes":8,
@@ -90,6 +98,7 @@ const DummyDB = {
    },
    {
       "questionId":9,
+      "title": "title 9",
       "content":"Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Duis faucibus accumsan odio. Curabitur convallis. Duis consequat dui nec nisi volutpat eleifend. Donec ut dolor. Morbi vel lectus in quam fringilla rhoncus. Mauris enim leo, rhoncus sed, vestibulum sit amet, cursus id, turpis. Integer aliquet, massa id lobortis convallis, tortor risus dapibus augue, vel accumsan tellus nisi eu orci. Mauris lacinia sapien quis libero. Nullam sit amet turpis elementum ligula vehicula consequat. Morbi a ipsum.",
       "upVotes":9,
       "downVotes":9,
@@ -101,6 +110,7 @@ const DummyDB = {
    },
    {
       "questionId":10,
+      "title": "title 10",
       "content":"Maecenas tristique, est et tempus semper, est quam pharetra magna, ac consequat metus sapien ut nunc.",
       "upVotes":10,
       "downVotes":10,

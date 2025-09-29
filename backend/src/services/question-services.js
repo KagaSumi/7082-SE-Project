@@ -87,18 +87,19 @@ class QuestionService {
             throw new Error(err.message);
         }
 
-        result;
+        let result = null;
         
-        for (question of dummyDB.questions) {
-            if (question.questionId === data.questionId) {
+        for (const question of dummyDB.questions) {
+            if (question.questionId == data.questionId) {
                 result = question;
+                break;
             }
         }
 
         result.title = data.title;
         result.content = data.content;
         result.isAnonymous = data.isAnonymous;
-        result.updateAt = genericHelper.getCurrentDateTime();
+        result.updatedAt = genericHelper.getCurrentDateTime();
 
         return result;
     }

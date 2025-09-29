@@ -40,12 +40,14 @@ class QuestionController {
     updateQuestion(req, res) {
         const {questionId} = req.params;
 
-        data = req.body;
+        let data = req.body;
         data["questionId"] = questionId;
+        data["isAnonymous"] = (data.isAnonymous === "true");
 
         questionService
         .updateQuestion(data)
         .then((question) => {
+            console.log(question);
             res.json(question);
         })
         .catch((err) => {
