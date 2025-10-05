@@ -243,7 +243,92 @@ answers: [
       "isAnonymous":false,
       "userId":10
    }
-]    
+],
+
+ratings: [
+   {
+      "voteId":1,
+      "userId": 1,
+      "createdAt":"6/5/2025",
+      "voteType":1,     // 0: Down vote, 1: Up vote
+      "entityType": "Question",
+      "entityId":1
+   },
+   {
+      "voteId":2,
+      "userId": 1,
+      "createdAt":"11/13/2024",
+      "voteType":0,
+      "entityType": "Answer",
+      "entityId":2
+   },
+   {
+      "voteId":3,
+      "userId": 1,
+      "createdAt":"6/5/2025",
+      "voteType":0,
+      "entityType":"Question",
+      "entityId":3
+   },
+   {
+      "voteId":4,
+      "userId": 1,
+      "createdAt":"8/16/2025",
+      "voteType":1,
+      "entityType":"Answer",
+      "entityId":4
+   },
+   {
+      "voteId":5,
+      "userId": 3,
+      "createdAt":"1/18/2025",
+      "voteType":1,
+      "entityType":"Question",
+      "entityId":5
+   },
+   {
+      "voteId":6,
+      "userId": 1,
+      "createdAt":"11/13/2024",
+      "voteType":1,
+      "entityType":"Question",
+      "entityId":5
+   },
+   {
+      "voteId":7,
+      "userId": 1,
+      "createdAt":"6/13/2025",
+      "voteType":1,
+      "entityType":"Answer",
+      "entityId":7
+   },
+   {
+      "voteId":8,
+      "userId": 1,
+      "createdAt":"9/4/2025",
+      "voteType":0,
+      "entityType":"Question",
+      "entityId":8
+   },
+   {
+      "voteId":9,
+      "userId": 1,
+      "createdAt":"10/29/2024",
+      "voteType":1,
+      "entityType":"Question",
+      "entityId":9
+   },
+   {
+      "voteId":10,
+      "userId": 1,
+      "createdAt":"12/28/2024",
+      "voteType":0,
+      "entityType":"Question",
+      "entityId":10
+   }
+],
+
+ratingStartId: 11
 }
 
 module.exports = DummyDB;

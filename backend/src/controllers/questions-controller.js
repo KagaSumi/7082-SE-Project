@@ -67,6 +67,22 @@ class QuestionController {
             res.status(ErrorCodes.INVALID_REQUEST).send(err.message);
         });
     }
+
+    rateQuestion(req, res) {
+        const {questionId} = req.params;
+
+        let data = req.body;
+        data["questionId"] = questionId;
+
+        questionService
+        .rateQuestion(data)
+        .then((response) => {
+            res.json(response);
+        })
+        .catch((err) => {
+            res.status(ErrorCodes.INVALID_REQUEST).send(err.message);
+        });
+    }
 }
 
 module.exports = new QuestionController();
