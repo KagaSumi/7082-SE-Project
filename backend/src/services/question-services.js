@@ -127,7 +127,7 @@ class QuestionService {
         };
     }
 
-        async rateQuestion(data) {
+    async rateQuestion(data) {
         try {
             console.log(`Rating a question...`);
 
@@ -138,16 +138,36 @@ class QuestionService {
             throw new Error(err.message);
         }
 
-        dummyDB.ratings.push(
-            {
-                "voteId": ++dummyDB.ratingStartId,
-                "userId": data.userId,
-                "createdAt": genericHelper.getCurrentDateTime(),
-                "voteType": data.type == 1 ? 1 : 0,
-                "entityType": "Question",
-                "entityId": data.questionId
+        // Double clicking a vote will undo the vote
+        let voteType = data.type == 1 ? 1 : 0;
+        const numRatings = dummyDB.ratings.length;
+        let isDuplicated = false;
+
+        for (let i = 0; i < numRatings; i++) {
+            let rating = dummyDB.ratings[i];
+            if (rating.voteType == voteType
+                && rating.entityType == "Question"
+                && rating.entityId == data.questionId
+                && rating.userId == data.userId
+            ) {
+                dummyDB.ratings.splice(i, 1);
+                isDuplicated = true;
+                break;
             }
-        );
+        }
+
+        if (!isDuplicated) {
+            dummyDB.ratings.push(
+                {
+                    "voteId": ++dummyDB.ratingStartId,
+                    "userId": data.userId,
+                    "createdAt": genericHelper.getCurrentDateTime(),
+                    "voteType": data.type == 1 ? 1 : 0,
+                    "entityType": "Question",
+                    "entityId": data.questionId
+                }
+            );
+        }
 
         let res = {
             questionId: data.questionId,
@@ -155,17 +175,33 @@ class QuestionService {
             downVotes: 0
         }
 
+        res = this.getVotes(res);
+
+        return res;
+    }
+
+    async getVotes(obj) {
+        try {
+            console.log(`Getting all votes of a question...`);
+
+            // DB query goes here //
+            await genericHelper.sleep(2000);
+            ////////////////////////
+        } catch (err) {
+            throw new Error(err.message);
+        }
+
         for (const rating of dummyDB.ratings) {
-            if (rating.entityType === "Question" && rating.entityId == data.questionId) {
+            if (rating.entityType === "Question" && rating.entityId === obj.questionId) {
                 if (rating.voteType === 0) {
-                    res.downVotes++;
+                    obj.downVotes++;
                 } else {
-                    res.upVotes++;
+                    obj.upVotes++;
                 }
             }
         }
 
-        return res;
+        return obj;
     }
 }
 

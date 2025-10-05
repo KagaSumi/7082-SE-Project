@@ -6,6 +6,6 @@ router.post('/', answerController.createAnswer);
 router.get('/:answerId', answerController.getOneAnswer);
 router.put('/:answerId', answerController.updateAnswer);
 router.delete('/:answerId', answerController.deleteAnswer);
-router.post('/answers/:answerId/rate', answerController.rateAnswer);
+router.post('/:answerId/rate', answerController.rateAnswer);
 
 module.exports = router;

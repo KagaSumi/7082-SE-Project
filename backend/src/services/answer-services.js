@@ -129,16 +129,36 @@ class AnswerService {
             throw new Error(err.message);
         }
 
-        dummyDB.ratings.push(
-            {
-                "voteId": ++dummyDB.ratingStartId,
-                "userId": data.userId,
-                "createdAt": genericHelper.getCurrentDateTime(),
-                "voteType": data.type == 1 ? 1 : 0,
-                "entityType": "Answer",
-                "entityId": data.answerId
+        // Double clicking a vote will undo the vote
+        let voteType = data.type == 1 ? 1 : 0;
+        const numRatings = dummyDB.ratings.length;
+        let isDuplicated = false;
+
+        for (let i = 0; i < numRatings; i++) {
+            let rating = dummyDB.ratings[i];
+            if (rating.voteType == voteType
+                && rating.entityType == "Answer"
+                && rating.entityId == data.answerId
+                && rating.userId == data.userId
+            ) {
+                dummyDB.ratings.splice(i, 1);
+                isDuplicated = true;
+                break;
             }
-        );
+        }
+
+        if (!isDuplicated) {
+            dummyDB.ratings.push(
+                {
+                    "voteId": ++dummyDB.ratingStartId,
+                    "userId": data.userId,
+                    "createdAt": genericHelper.getCurrentDateTime(),
+                    "voteType": data.type == 1 ? 1 : 0,
+                    "entityType": "Answer",
+                    "entityId": data.answerId
+                }
+            );
+        }
 
         let res = {
             answerId: data.answerId,
@@ -146,18 +166,35 @@ class AnswerService {
             downVotes: 0
         }
 
+        res = this.getVotes(res);
+
+        return res;
+    }
+
+    async getVotes(obj) {
+        try {
+            console.log(`Getting all votes of an answer...`);
+
+            // DB query goes here //
+            await genericHelper.sleep(2000);
+            ////////////////////////
+        } catch (err) {
+            throw new Error(err.message);
+        }
+
         for (const rating of dummyDB.ratings) {
-            if (rating.entityType === "Answer" && rating.entityId == data.answerId) {
+            if (rating.entityType === "Answer" && rating.entityId === obj.answerId) {
                 if (rating.voteType === 0) {
-                    res.downVotes++;
+                    obj.downVotes++;
                 } else {
-                    res.upVotes++;
+                    obj.upVotes++;
                 }
             }
         }
 
-        return res;
+        return obj;
     }
+
 }
 
 module.exports = new AnswerService();
