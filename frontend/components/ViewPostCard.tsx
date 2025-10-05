@@ -1,10 +1,12 @@
 import React from "react";
 
+import Link from "next/link";
 import Card from "./Card/Card";
 import Tag from "./Card/Tag";
 import PillButton from "./Card/PillButton";
 
 export default function ViewPostCard({
+  questionId,
   title,
   tag,
   username,
@@ -14,6 +16,7 @@ export default function ViewPostCard({
   views,
   replyCount,
 }: {
+  questionId: number;
   title: string;
   tag: string[];
   username: string;
@@ -27,7 +30,9 @@ export default function ViewPostCard({
     <Card>
       {/** Header */}
       <div className="mb-2 flex items-start justify-between gap-4">
-        <h2 className="text-xl font-semibold text-slate-900">{title}</h2>
+        <Link href={{ pathname: `/question/${questionId}` }}>
+          <h2 className="text-xl font-semibold text-slate-900">{title}</h2>
+        </Link>
       </div>
       <div className="mb-3 text-xs text-slate-500">
         <span className="font-medium text-slate-700">{username}</span>
