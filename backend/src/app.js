@@ -1,7 +1,10 @@
 const express = require('express');
+const { testConnection } = require('./services/database');
+
 const userRouter = require('./routes/user-router');
 const questionRouter = require('./routes/question-router');
 const answerRouter = require('./routes/answer-router');
+
 
 const app = express();
 

@@ -221,7 +221,7 @@ class QuestionService {
         }
     }
 
-    async deletQuestion(data) {
+    async deleteQuestion(data) {
         try {
             console.log(`Deleting the question...`);
 

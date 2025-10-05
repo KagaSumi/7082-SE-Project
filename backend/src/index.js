@@ -1,4 +1,5 @@
 const app = require('./app');
+const { testConnection } = require('./services/database');
 
 const PORT = 3000;
 
