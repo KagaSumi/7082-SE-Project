@@ -1,11 +1,11 @@
 const genericHelper = require("../helper-functions/generic-helper");
 const dummyDB = require("../enums/dummy-db");
-questionStartId = 11;
+let answerStartId = 11;
 
-class QuestionService {
-    async createQuestion(data) {
+class AnswerService {
+    async createAnswer(data) {
         try {
-            console.log(`Creating question...`);
+            console.log(`Creating answer...`);
 
             // DB query goes here //
             await genericHelper.sleep(2000);
@@ -14,28 +14,26 @@ class QuestionService {
             throw new Error(err.message);
         }
 
-        question = {
-            "questionId": ++questionStartId,
-            "title": data.title,
+        let answer = {
+            "answerId": ++answerStartId,
+            "questionId": data.questionId,
             "content": data.content,
             "userId": data.userId,
-            "courseId": data.courseId,
-            "viewCount": 0,
             "upVotes": 0,
             "downVotes": 0,
             "isAnonymous": data.isAnonymous,
             "createdAt": genericHelper.getCurrentDateTime(),
             "updatedAt": genericHelper.getCurrentDateTime()
-        }
+        };
 
-        dummyDB.questions.push(question);
+        dummyDB.answers.push(answer);
 
-        return question;
+        return answer;
     }
 
-    async getSingleQuestion(data) {
+    async getOneAnswer(data) {
         try {
-            console.log(`Getting a question with all answers...}`);
+            console.log(`Getting one answer...`);
 
             // DB query goes here //
             await genericHelper.sleep(2000);
@@ -43,42 +41,26 @@ class QuestionService {
         } catch (err) {
             throw new Error(err.message);
         }
+        
+        let result = null;
 
-        let result = {"answers": []};
-
-        for (const question of dummyDB.questions) {
-            if (question.questionId == data.questionId) {
-                result = {...question, "answers": []};
+        for (const answer of dummyDB.answers) {
+            if (answer.answerId == data.answerId) {
+                result = {...answer};
                 break;
             }
         }
 
-        for (const answer of dummyDB.answers) {
-            if (answer.questionId == data.questionId) {
-                result["answers"].push(answer);
-            }
+        if (result === null) {
+            throw new Error("Answer ID doesn't exist!");
         }
 
         return result;
     }
 
-    async getAllQuestions() {
+    async updateAnswer(data) {
         try {
-            console.log(`Get all questions with optional search filter...`);
-
-            // DB query goes here //
-            await genericHelper.sleep(2000);
-            ////////////////////////
-        } catch (err) {
-            throw new Error(err.message);
-        }
-
-        return dummyDB.questions;
-    }
-
-    async updateQuestion(data) {
-        try {
-            console.log(`Updating the question...`);
+            console.log(`Updating answer...`);
 
             // DB query goes here //
             await genericHelper.sleep(2000);
@@ -89,14 +71,18 @@ class QuestionService {
 
         let result = null;
         
-        for (const question of dummyDB.questions) {
-            if (question.questionId == data.questionId) {
-                result = question;
+        for (const answer of dummyDB.answers) {
+            if (answer.answerId == data.answerId) {
+                result = answer;
                 break;
             }
         }
 
-        result.title = data.title;
+        if (result === null) {
+            throw new Error("Answer ID doesn't exist!");
+        }
+
+        result.answerId = data.answerId;
         result.content = data.content;
         result.isAnonymous = data.isAnonymous;
         result.updatedAt = genericHelper.getCurrentDateTime();
@@ -104,9 +90,9 @@ class QuestionService {
         return result;
     }
 
-    async deletQuestion(data) {
+    async deleteAnswer(data) {
         try {
-            console.log(`Deleting the question...`);
+            console.log(`Deleting answer...`);
 
             // DB query goes here //
             await genericHelper.sleep(2000);
@@ -115,21 +101,26 @@ class QuestionService {
             throw new Error(err.message);
         }
 
-        const index = dummyDB.questions.findIndex(question => question.questionId == data.questionId);
+        const index = dummyDB.answers.findIndex(answer => answer.answerId == data.answerId);
         
         if (index != -1) {
-          dummyDB.questions.splice(index, 1);
+            dummyDB.answers.splice(index, 1);
+
+            return {
+                "success": true,
+                "message": "Successfully deleted."
+            };
         }
 
         return {
-            "success": true,
-            "message": "Successfully deleted."
-        };
+            "success": false,
+            "meesage": "Answer not found!"
+        }
     }
 
-    async rateQuestion(data) {
+    async rateAnswer(data) {
         try {
-            console.log(`Rating a question...`);
+            console.log(`Rating an answer...`);
 
             // DB query goes here //
             await genericHelper.sleep(2000);
@@ -146,8 +137,8 @@ class QuestionService {
         for (let i = 0; i < numRatings; i++) {
             let rating = dummyDB.ratings[i];
             if (rating.voteType == voteType
-                && rating.entityType == "Question"
-                && rating.entityId == data.questionId
+                && rating.entityType == "Answer"
+                && rating.entityId == data.answerId
                 && rating.userId == data.userId
             ) {
                 dummyDB.ratings.splice(i, 1);
@@ -163,14 +154,14 @@ class QuestionService {
                     "userId": data.userId,
                     "createdAt": genericHelper.getCurrentDateTime(),
                     "voteType": data.type == 1 ? 1 : 0,
-                    "entityType": "Question",
-                    "entityId": data.questionId
+                    "entityType": "Answer",
+                    "entityId": data.answerId
                 }
             );
         }
 
         let res = {
-            questionId: data.questionId,
+            answerId: data.answerId,
             upVotes: 0,
             downVotes: 0
         }
@@ -182,7 +173,7 @@ class QuestionService {
 
     async getVotes(obj) {
         try {
-            console.log(`Getting all votes of a question...`);
+            console.log(`Getting all votes of an answer...`);
 
             // DB query goes here //
             await genericHelper.sleep(2000);
@@ -192,7 +183,7 @@ class QuestionService {
         }
 
         for (const rating of dummyDB.ratings) {
-            if (rating.entityType === "Question" && rating.entityId == obj.questionId) {
+            if (rating.entityType === "Answer" && rating.entityId == obj.answerId) {
                 if (rating.voteType === 0) {
                     obj.downVotes++;
                 } else {
@@ -203,6 +194,7 @@ class QuestionService {
 
         return obj;
     }
+
 }
 
-module.exports = new QuestionService();
+module.exports = new AnswerService();
