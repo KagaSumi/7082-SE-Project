@@ -10,7 +10,8 @@ const DummyDB = {
       "updatedAt":"5/26/2025",
       "isAnonymous":false,
       "userId":1,
-      "courseId":1
+      "courseId":1,
+      "viewCount": 1
    },
    {
       "questionId":2,
@@ -22,7 +23,8 @@ const DummyDB = {
       "updatedAt":"10/27/2024",
       "isAnonymous":true,
       "userId":2,
-      "courseId":2
+      "courseId":2,
+      "viewCount": 2
    },
    {
       "questionId":3,
@@ -34,7 +36,8 @@ const DummyDB = {
       "updatedAt":"3/24/2025",
       "isAnonymous":true,
       "userId":3,
-      "courseId":3
+      "courseId":3,
+      "viewCount": 3
    },
    {
       "questionId":4,
@@ -46,7 +49,8 @@ const DummyDB = {
       "updatedAt":"7/18/2025",
       "isAnonymous":true,
       "userId":4,
-      "courseId":4
+      "courseId":4,
+      "viewCount": 4
    },
    {
       "questionId":5,
@@ -58,7 +62,8 @@ const DummyDB = {
       "updatedAt":"12/13/2024",
       "isAnonymous":false,
       "userId":5,
-      "courseId":5
+      "courseId":5,
+      "viewCount": 5
    },
    {
       "questionId":6,
@@ -70,7 +75,8 @@ const DummyDB = {
       "updatedAt":"6/24/2025",
       "isAnonymous":false,
       "userId":6,
-      "courseId":6
+      "courseId":6,
+      "viewCount": 6
    },
    {
       "questionId":7,
@@ -82,7 +88,8 @@ const DummyDB = {
       "updatedAt":"10/31/2024",
       "isAnonymous":false,
       "userId":7,
-      "courseId":7
+      "courseId":7,
+      "viewCount": 7
    },
    {
       "questionId":8,
@@ -94,7 +101,8 @@ const DummyDB = {
       "updatedAt":"10/12/2024",
       "isAnonymous":false,
       "userId":8,
-      "courseId":8
+      "courseId":8,
+      "viewCount": 8
    },
    {
       "questionId":9,
@@ -106,7 +114,8 @@ const DummyDB = {
       "updatedAt":"10/23/2024",
       "isAnonymous":false,
       "userId":9,
-      "courseId":9
+      "courseId":9,
+      "viewCount": 9
    },
    {
       "questionId":10,
@@ -118,7 +127,8 @@ const DummyDB = {
       "updatedAt":"12/5/2024",
       "isAnonymous":false,
       "userId":10,
-      "courseId":10
+      "courseId":10,
+      "viewCount": 10
    }
 ],
 
