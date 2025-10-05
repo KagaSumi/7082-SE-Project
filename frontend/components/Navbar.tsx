@@ -29,7 +29,7 @@ export default function Navbar() {
         <div className="ml-4 flex items-center gap-6">
           <nav className="hidden md:flex items-center gap-6">
             <Link
-              href="/posts"
+              href="/"
               className="text-slate-700 hover:text-blue-600 font-medium"
             >
               Posts

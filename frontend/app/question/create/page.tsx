@@ -5,11 +5,21 @@ import Card from "../../../components/Card/Card";
 import PillButton from "../../../components/Card/PillButton";
 
 const courses = [
-  "COMP 7305",
-  "Calculus 120",
-  "Math 1050",
-  "History 150",
-  "Biology 250",
+  "COMP 1510",
+  "COMP 1537",
+  "COMP 2510",
+  "COMP 2521",
+  "MATH 3042",
+  "COMM 1140",
+  "COMM 2216",
+  "BUSA 2150",
+  "OPMT 1197",
+  "LIBS 7001",
+  "COMP 3717",
+  "COMP 4736",
+  "COMP 4916",
+  "COMP 7000",
+  "COMP 8001",
 ];
 
 export default function CreateQuestionPage() {
