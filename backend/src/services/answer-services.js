@@ -1,6 +1,6 @@
 const genericHelper = require("../helper-functions/generic-helper");
 const dummyDB = require("../enums/dummy-db");
-startId = 11;
+let startId = 11;
 
 class AnswerService {
     async createAnswer(data) {
@@ -14,7 +14,7 @@ class AnswerService {
             throw new Error(err.message);
         }
 
-        answer = {
+        let answer = {
             "answerId": ++startId,
             "questionId": data.questionId,
             "content": data.content,
@@ -24,7 +24,7 @@ class AnswerService {
             "isAnonymous": data.isAnonymous,
             "createdAt": genericHelper.getCurrentDateTime(),
             "updatedAt": genericHelper.getCurrentDateTime()
-        }
+        };
 
         dummyDB.answers.push(answer);
 
@@ -33,7 +33,7 @@ class AnswerService {
 
     async getOneAnswer(data) {
         try {
-            console.log(`Getting one answer...}`);
+            console.log(`Getting one answer...`);
 
             // DB query goes here //
             await genericHelper.sleep(2000);
