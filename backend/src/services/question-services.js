@@ -1,6 +1,6 @@
 const genericHelper = require("../helper-functions/generic-helper");
 const dummyDB = require("../enums/dummy-db");
-startId = 11;
+questionStartId = 11;
 
 class QuestionService {
     async createQuestion(data) {
@@ -15,7 +15,7 @@ class QuestionService {
         }
 
         question = {
-            "questionId": ++startId,
+            "questionId": ++questionStartId,
             "title": data.title,
             "content": data.content,
             "userId": data.userId,
@@ -125,6 +125,47 @@ class QuestionService {
             "success": true,
             "message": "Successfully deleted."
         };
+    }
+
+        async rateQuestion(data) {
+        try {
+            console.log(`Rating a question...`);
+
+            // DB query goes here //
+            await genericHelper.sleep(2000);
+            ////////////////////////
+        } catch (err) {
+            throw new Error(err.message);
+        }
+
+        dummyDB.ratings.push(
+            {
+                "voteId": ++dummyDB.ratingStartId,
+                "userId": data.userId,
+                "createdAt": genericHelper.getCurrentDateTime(),
+                "voteType": data.type == 1 ? 1 : 0,
+                "entityType": "Question",
+                "entityId": data.questionId
+            }
+        );
+
+        let res = {
+            questionId: data.questionId,
+            upVotes: 0,
+            downVotes: 0
+        }
+
+        for (const rating of dummyDB.ratings) {
+            if (rating.entityType === "Question" && rating.entityId == data.questionId) {
+                if (rating.voteType === 0) {
+                    res.downVotes++;
+                } else {
+                    res.upVotes++;
+                }
+            }
+        }
+
+        return res;
     }
 }
 

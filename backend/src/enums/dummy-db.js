@@ -251,7 +251,7 @@ ratings: [
       "userId": 1,
       "createdAt":"6/5/2025",
       "voteType":1,     // 0: Down vote, 1: Up vote
-      "entityType":0,   // 0: A question vote, 1: An aswer vote
+      "entityType": "Question",
       "entityId":1
    },
    {
@@ -259,7 +259,7 @@ ratings: [
       "userId": 1,
       "createdAt":"11/13/2024",
       "voteType":0,
-      "entityType":1,
+      "entityType": "Answer",
       "entityId":2
    },
    {
@@ -267,7 +267,7 @@ ratings: [
       "userId": 1,
       "createdAt":"6/5/2025",
       "voteType":0,
-      "entityType":0,
+      "entityType":"Question",
       "entityId":3
    },
    {
@@ -275,7 +275,7 @@ ratings: [
       "userId": 1,
       "createdAt":"8/16/2025",
       "voteType":1,
-      "entityType":1,
+      "entityType":"Answer",
       "entityId":4
    },
    {
@@ -283,7 +283,7 @@ ratings: [
       "userId": 1,
       "createdAt":"1/18/2025",
       "voteType":1,
-      "entityType":0,
+      "entityType":"Question",
       "entityId":5
    },
    {
@@ -291,7 +291,7 @@ ratings: [
       "userId": 1,
       "createdAt":"11/13/2024",
       "voteType":1,
-      "entityType":0,
+      "entityType":"Question",
       "entityId":6
    },
    {
@@ -299,7 +299,7 @@ ratings: [
       "userId": 1,
       "createdAt":"6/13/2025",
       "voteType":1,
-      "entityType":1,
+      "entityType":"Answer",
       "entityId":7
    },
    {
@@ -307,7 +307,7 @@ ratings: [
       "userId": 1,
       "createdAt":"9/4/2025",
       "voteType":0,
-      "entityType":0,
+      "entityType":"Question",
       "entityId":8
    },
    {
@@ -315,7 +315,7 @@ ratings: [
       "userId": 1,
       "createdAt":"10/29/2024",
       "voteType":1,
-      "entityType":0,
+      "entityType":"Question",
       "entityId":9
    },
    {
@@ -323,10 +323,12 @@ ratings: [
       "userId": 1,
       "createdAt":"12/28/2024",
       "voteType":0,
-      "entityType":0,
+      "entityType":"Question",
       "entityId":10
    }
-]
+],
+
+ratingStartId: 11
 }
 
 module.exports = DummyDB;
