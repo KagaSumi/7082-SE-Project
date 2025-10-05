@@ -55,6 +55,22 @@ class AnswerController {
             res.status(ErrorCodes.INVALID_REQUEST).send(err.message);
         });
     }
+
+    rateAnswer(req, res) {
+        const {answerId} = req.params;
+
+        let data = req.body;
+        data["answerId"] = answerId;
+
+        answerService
+        .rateAnswer(data)
+        .then((response) => {
+            res.json(response);
+        })
+        .catch((err) => {
+            res.status(ErrorCodes.INVALID_REQUEST).send(err.message);
+        });
+    }
 }
 
 module.exports = new AnswerController();
