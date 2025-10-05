@@ -47,6 +47,7 @@ CREATE TABLE Answer (
     score INT DEFAULT 0,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    is_anonymous BOOLEAN DEFAULT FALSE,
     question_id INT NOT NULL,
     user_id INT NOT NULL,
     FOREIGN KEY (question_id) REFERENCES Question(question_id) ON DELETE CASCADE,
@@ -285,49 +286,50 @@ INSERT INTO Question (title, body, view_count, is_anonymous, score, course_id, u
 ('Web security best practices', 'What are the most important security practices for a new web application?', 198, FALSE, 18, 2, 2),  -- Computer Science, Jane
 ('Quantum entanglement explanation', 'Can someone explain quantum entanglement in simple terms?', 76, TRUE, 6, 3, 3),  -- Physics, Bob
 ('MySQL vs PostgreSQL for large applications', 'Which database system would be better for a large-scale application and why?', 123, FALSE, 9, 2, 1);  -- Computer Science, John
+
 -- Answers (FIFTH - AFTER Questions exist)
-INSERT INTO Answer (body, is_accepted, score, question_id, user_id) VALUES
+INSERT INTO Answer (body, is_accepted, score, is_anonymous, question_id, user_id) VALUES
 -- Answers for Question 1
-('Use EXPLAIN to analyze your query execution plan. Look for full table scans and add appropriate indexes.', TRUE, 15, 1, 2),
-('Make sure to index columns used in WHERE clauses and JOIN conditions. Also, avoid SELECT * and only fetch needed columns.', FALSE, 8, 1, 3),
-('Consider using query caching and optimizing your database configuration settings like buffer pool size.', FALSE, 5, 1, 4),
+('Use EXPLAIN to analyze your query execution plan. Look for full table scans and add appropriate indexes.', TRUE, 15, FALSE, 1, 2),
+('Make sure to index columns used in WHERE clauses and JOIN conditions. Also, avoid SELECT * and only fetch needed columns.', FALSE, 8, FALSE, 1, 3),
+('Consider using query caching and optimizing your database configuration settings like buffer pool size.', FALSE, 5, TRUE, 1, 4),  -- Anonymous answer
 
 -- Answers for Question 2
-('First, find the antiderivative: F(x) = x³ + x² - x. Then evaluate F(5) - F(0) = (125 + 25 - 5) - 0 = 145', TRUE, 12, 2, 1),
-('Remember that ∫(3x²)dx = x³, ∫(2x)dx = x², and ∫(-1)dx = -x. Apply the power rule for each term.', FALSE, 6, 2, 5),
+('First, find the antiderivative: F(x) = x³ + x² - x. Then evaluate F(5) - F(0) = (125 + 25 - 5) - 0 = 145', TRUE, 12, FALSE, 2, 1),
+('Remember that ∫(3x²)dx = x³, ∫(2x)dx = x², and ∫(-1)dx = -x. Apply the power rule for each term.', FALSE, 6, TRUE, 2, 5),  -- Anonymous answer
 
 -- Answers for Question 3
-('Make sure your app.listen() call comes after all route definitions. Also check your base path configuration.', TRUE, 18, 3, 2),
-('You might have a middleware that is not calling next(). Check your middleware order and implementation.', FALSE, 9, 3, 4),
-('Try using console.log to debug the route registration order. Sometimes the order matters.', FALSE, 4, 3, 1),
+('Make sure your app.listen() call comes after all route definitions. Also check your base path configuration.', TRUE, 18, FALSE, 3, 2),
+('You might have a middleware that is not calling next(). Check your middleware order and implementation.', FALSE, 9, FALSE, 3, 4),
+('Try using console.log to debug the route registration order. Sometimes the order matters.', FALSE, 4, TRUE, 3, 1),  -- Anonymous answer
 
 -- Answers for Question 4
-('Use the formula: h = v²/(2g) where v=20 m/s and g=9.8 m/s². So h = 400/(19.6) ≈ 20.41 meters', TRUE, 7, 4, 3),
-('At maximum height, final velocity is 0. Use v² = u² - 2gh to solve for h.', FALSE, 3, 4, 5),
+('Use the formula: h = v²/(2g) where v=20 m/s and g=9.8 m/s². So h = 400/(19.6) ≈ 20.41 meters', TRUE, 7, FALSE, 4, 3),
+('At maximum height, final velocity is 0. Use v² = u² - 2gh to solve for h.', FALSE, 3, TRUE, 4, 5),  -- Anonymous answer
 
 -- Answers for Question 5
-('1NF: Each column atomic - no arrays/lists. 2NF: No partial dependencies. 3NF: No transitive dependencies.', TRUE, 20, 5, 1),
-('Example: Student table with multiple phone numbers violates 1NF. Split into separate rows or table.', FALSE, 11, 5, 2),
+('1NF: Each column atomic - no arrays/lists. 2NF: No partial dependencies. 3NF: No transitive dependencies.', TRUE, 20, FALSE, 5, 1),
+('Example: Student table with multiple phone numbers violates 1NF. Split into separate rows or table.', FALSE, 11, FALSE, 5, 2),
 
 -- Answers for Question 6
-('Async/await is syntactic sugar for Promises. Use async/await for cleaner code, but understand Promises first.', TRUE, 25, 6, 3),
-('Remember: async functions always return Promises. Await can only be used inside async functions.', FALSE, 14, 6, 4),
+('Async/await is syntactic sugar for Promises. Use async/await for cleaner code, but understand Promises first.', TRUE, 25, FALSE, 6, 3),
+('Remember: async functions always return Promises. Await can only be used inside async functions.', FALSE, 14, TRUE, 6, 4),  -- Anonymous answer
 
 -- Answers for Question 7
-('Basis vectors form a coordinate system. In 2D, i=(1,0) and j=(0,1) are standard basis vectors.', TRUE, 5, 7, 2),
-('Any vector in the space can be written as a linear combination of basis vectors.', FALSE, 2, 7, 5),
+('Basis vectors form a coordinate system. In 2D, i=(1,0) and j=(0,1) are standard basis vectors.', TRUE, 5, FALSE, 7, 2),
+('Any vector in the space can be written as a linear combination of basis vectors.', FALSE, 2, TRUE, 7, 5),  -- Anonymous answer
 
 -- Answers for Question 8
-('Always hash passwords with salt, use HTTPS, validate input, and implement proper authentication.', TRUE, 22, 8, 1),
-('Don''t forget about CSRF protection, XSS prevention, and regular security updates.', FALSE, 15, 8, 3),
+('Always hash passwords with salt, use HTTPS, validate input, and implement proper authentication.', TRUE, 22, FALSE, 8, 1),
+('Don''t forget about CSRF protection, XSS prevention, and regular security updates.', FALSE, 15, TRUE, 8, 3),  -- Anonymous answer
 
 -- Answers for Question 9
-('Quantum entanglement is when particles become connected and affect each other instantly, even at distance.', TRUE, 9, 9, 2),
-('Einstein called it "spooky action at a distance". It challenges our classical understanding of physics.', FALSE, 4, 9, 1),
+('Quantum entanglement is when particles become connected and affect each other instantly, even at distance.', TRUE, 9, FALSE, 9, 2),
+('Einstein called it "spooky action at a distance". It challenges our classical understanding of physics.', FALSE, 4, TRUE, 9, 1),  -- Anonymous answer
 
 -- Answers for Question 10
-('PostgreSQL has better support for complex queries, JSON, and spatial data. MySQL is faster for simple reads.', TRUE, 12, 10, 3),
-('Consider your team''s expertise. Both are good choices but have different strengths.', FALSE, 6, 10, 4);
+('PostgreSQL has better support for complex queries, JSON, and spatial data. MySQL is faster for simple reads.', TRUE, 12, FALSE, 10, 3),
+('Consider your team''s expertise. Both are good choices but have different strengths.', FALSE, 6, TRUE, 10, 4);  -- Anonymous answer
 
 -- Question-Tag relationships (SIXTH - AFTER Questions and Tags exist)
 INSERT INTO QuestionTag (tag_id, question_id) VALUES
