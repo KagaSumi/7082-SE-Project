@@ -1,6 +1,7 @@
 const express = require('express');
 const userRouter = require('./routes/user-router');
-const questionRouter = require('./routes/question-router')
+const questionRouter = require('./routes/question-router');
+const answerRouter = require('./routes/answer-router');
 
 const app = express();
 
@@ -17,5 +18,6 @@ app.use((err, req, res, next) => {
 // Route setup
 app.use('/api/users', userRouter);
 app.use('/api/questions', questionRouter);
+app.use('/api/answers', answerRouter);
 
 module.exports = app;
