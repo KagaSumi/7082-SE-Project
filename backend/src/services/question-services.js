@@ -192,7 +192,7 @@ class QuestionService {
         }
 
         for (const rating of dummyDB.ratings) {
-            if (rating.entityType === "Question" && rating.entityId === obj.questionId) {
+            if (rating.entityType === "Question" && rating.entityId == obj.questionId) {
                 if (rating.voteType === 0) {
                     obj.downVotes++;
                 } else {

@@ -183,7 +183,7 @@ class AnswerService {
         }
 
         for (const rating of dummyDB.ratings) {
-            if (rating.entityType === "Answer" && rating.entityId === obj.answerId) {
+            if (rating.entityType === "Answer" && rating.entityId == obj.answerId) {
                 if (rating.voteType === 0) {
                     obj.downVotes++;
                 } else {

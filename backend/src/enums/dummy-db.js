@@ -280,7 +280,7 @@ ratings: [
    },
    {
       "voteId":5,
-      "userId": 1,
+      "userId": 3,
       "createdAt":"1/18/2025",
       "voteType":1,
       "entityType":"Question",
@@ -292,7 +292,7 @@ ratings: [
       "createdAt":"11/13/2024",
       "voteType":1,
       "entityType":"Question",
-      "entityId":6
+      "entityId":5
    },
    {
       "voteId":7,
