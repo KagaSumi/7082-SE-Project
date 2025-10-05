@@ -1,13 +1,11 @@
 import React from "react";
-
-// components
 import Link from "next/link";
 
 export default function Navbar() {
   return (
     <header className="sticky top-0 z-20 border-b border-slate-200 bg-white/70 backdrop-blur">
       <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3 sm:px-6 lg:px-8">
-        {/** Site header */}
+        {/* Site header */}
         <div className="flex items-center gap-3">
           <Link href="/">
             <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-blue-600 text-white">
@@ -19,7 +17,7 @@ export default function Navbar() {
           </Link>
         </div>
 
-        {/** Search bar */}
+        {/* Search bar */}
         <div className="min-w-[70%] lg:min-w-[50%]">
           <input
             placeholder="Search..."
@@ -27,8 +25,28 @@ export default function Navbar() {
           />
         </div>
 
-        {/** Profie / Create new question */}
-        <div className="ml-4 flex items-center gap-3">
+        {/* Nav links and profile */}
+        <div className="ml-4 flex items-center gap-6">
+          <nav className="hidden md:flex items-center gap-6">
+            <Link
+              href="/posts"
+              className="text-slate-700 hover:text-blue-600 font-medium"
+            >
+              Posts
+            </Link>
+            <Link
+              href="/courses"
+              className="text-slate-700 hover:text-blue-600 font-medium"
+            >
+              Courses
+            </Link>
+            <Link
+              href="/tags"
+              className="text-slate-700 hover:text-blue-600 font-medium"
+            >
+              Tags
+            </Link>
+          </nav>
           <button
             title="Create a question"
             aria-label="New Question"
