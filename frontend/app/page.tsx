@@ -36,7 +36,7 @@ const posts = [
     views: 5,
   },
   {
-    id: 2,
+    id: 3,
     title: "Best way to learn Python for beginners?",
     tag: ["Programming"],
     author: "AliceB",
@@ -48,7 +48,7 @@ const posts = [
     views: 5,
   },
   {
-    id: 2,
+    id: 4,
     title: "Best way to learn Python for beginners?",
     tag: ["Programming"],
     author: "AliceB",
@@ -60,7 +60,7 @@ const posts = [
     views: 5,
   },
   {
-    id: 2,
+    id: 5,
     title: "Best way to learn Python for beginners?",
     tag: ["Programming"],
     author: "AliceB",

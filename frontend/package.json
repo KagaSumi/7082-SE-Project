@@ -8,9 +8,9 @@
     "zod": "^4.1.11"
   },
   "scripts": {
-    "dev": "start http://localhost:3000 && next dev --turbopack",
+    "dev": "start http://localhost:8080 && next dev --turbopack -p 8080",
     "build": "next build",
-    "start": "next start",
+    "start": "next start -p 8080",
     "lint": "eslint"
   },
   "devDependencies": {
