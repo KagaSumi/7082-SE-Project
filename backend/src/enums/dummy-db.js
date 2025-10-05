@@ -243,7 +243,90 @@ answers: [
       "isAnonymous":false,
       "userId":10
    }
-]    
+],
+
+ratings: [
+   {
+      "voteId":1,
+      "userId": 1,
+      "createdAt":"6/5/2025",
+      "voteType":1,     // 0: Down vote, 1: Up vote
+      "entityType":0,   // 0: A question vote, 1: An aswer vote
+      "entityId":1
+   },
+   {
+      "voteId":2,
+      "userId": 1,
+      "createdAt":"11/13/2024",
+      "voteType":0,
+      "entityType":1,
+      "entityId":2
+   },
+   {
+      "voteId":3,
+      "userId": 1,
+      "createdAt":"6/5/2025",
+      "voteType":0,
+      "entityType":0,
+      "entityId":3
+   },
+   {
+      "voteId":4,
+      "userId": 1,
+      "createdAt":"8/16/2025",
+      "voteType":1,
+      "entityType":1,
+      "entityId":4
+   },
+   {
+      "voteId":5,
+      "userId": 1,
+      "createdAt":"1/18/2025",
+      "voteType":1,
+      "entityType":0,
+      "entityId":5
+   },
+   {
+      "voteId":6,
+      "userId": 1,
+      "createdAt":"11/13/2024",
+      "voteType":1,
+      "entityType":0,
+      "entityId":6
+   },
+   {
+      "voteId":7,
+      "userId": 1,
+      "createdAt":"6/13/2025",
+      "voteType":1,
+      "entityType":1,
+      "entityId":7
+   },
+   {
+      "voteId":8,
+      "userId": 1,
+      "createdAt":"9/4/2025",
+      "voteType":0,
+      "entityType":0,
+      "entityId":8
+   },
+   {
+      "voteId":9,
+      "userId": 1,
+      "createdAt":"10/29/2024",
+      "voteType":1,
+      "entityType":0,
+      "entityId":9
+   },
+   {
+      "voteId":10,
+      "userId": 1,
+      "createdAt":"12/28/2024",
+      "voteType":0,
+      "entityType":0,
+      "entityId":10
+   }
+]
 }
 
 module.exports = DummyDB;
