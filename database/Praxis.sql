@@ -243,23 +243,144 @@ CREATE INDEX idx_votes_user ON Votes(user_id);
 CREATE INDEX idx_questiontag_question ON QuestionTag(question_id);
 CREATE INDEX idx_questiontag_tag ON QuestionTag(tag_id);
 
--- Insert sample data
-INSERT INTO User (first_name, last_name, password, salt, email) VALUES
-('John', 'Doe', 'hashed_password_1', 'salt1', 'john.doe@email.com'),
-('Jane', 'Smith', 'hashed_password_2', 'salt2', 'jane.smith@email.com'),
-('Bob', 'Johnson', 'hashed_password_3', 'salt3', 'bob.johnson@email.com');
+-- =============================================
+-- COMPREHENSIVE DUMMY DATA
+-- =============================================
 
+-- Additional Users (FIRST)
+INSERT INTO User (first_name, last_name, password, salt, email, score) VALUES
+('Alice', 'Brown', 'hashed_password_4', 'salt4', 'alice.brown@email.com', 25),
+('Charlie', 'Wilson', 'hashed_password_5', 'salt5', 'charlie.wilson@email.com', 42),
+('Diana', 'Lee', 'hashed_password_6', 'salt6', 'diana.lee@email.com', 18),
+('Ethan', 'Davis', 'hashed_password_7', 'salt7', 'ethan.davis@email.com', 35),
+('Fiona', 'Garcia', 'hashed_password_8', 'salt8', 'fiona.garcia@email.com', 12);
+
+-- Additional Courses (SECOND)
 INSERT INTO Course (name, code) VALUES
-('Mathematics', 'MATH101'),
-('Computer Science', 'CS201'),
-('Physics', 'PHY301');
+('Database Systems', 'CS305'),
+('Web Development', 'CS210'),
+('Linear Algebra', 'MATH202'),
+('Quantum Physics', 'PHY405');
 
+-- Additional Tags (THIRD)
 INSERT INTO Tag (name) VALUES
-('algebra'),
-('calculus'),
-('programming'),
-('java'),
-('mechanics'),
-('homework');
+('database'),
+('sql'),
+('javascript'),
+('nodejs'),
+('homework-help'),
+('exam-prep'),
+('theory'),
+('practice');
+
+-- Questions (FOURTH - AFTER Users and Courses exist)
+INSERT INTO Question (title, body, view_count, is_anonymous, score, course_id, user_id) VALUES
+('How do I optimize MySQL queries?', 'I have a query that is running very slow on large datasets. What are some best practices for optimizing MySQL queries?', 156, FALSE, 8, 2, 1),  -- Computer Science, John
+('Help with calculus integration', 'I am stuck on this integral: ∫(3x² + 2x - 1)dx from 0 to 5. Can someone explain the steps?', 89, FALSE, 5, 1, 2),  -- Mathematics, Jane
+('Node.js Express routing not working', 'My Express routes are returning 404 even though I defined them correctly. Here is my code...', 234, FALSE, 12, 2, 3),  -- Computer Science, Bob
+('Physics kinematics problem', 'A ball is thrown upward with initial velocity 20 m/s. How high does it go?', 67, TRUE, 3, 3, 1),  -- Physics, John
+('Database normalization examples', 'Can someone provide real-world examples of 1NF, 2NF, and 3NF?', 178, FALSE, 15, 2, 2),  -- Computer Science, Jane
+('JavaScript async/await confusion', 'I am confused about when to use async/await vs Promises. Can someone clarify?', 312, FALSE, 22, 2, 3),  -- Computer Science, Bob
+('Linear algebra basis vectors', 'What exactly are basis vectors and how do they relate to coordinate systems?', 45, FALSE, 2, 1, 1),  -- Mathematics, John
+('Web security best practices', 'What are the most important security practices for a new web application?', 198, FALSE, 18, 2, 2),  -- Computer Science, Jane
+('Quantum entanglement explanation', 'Can someone explain quantum entanglement in simple terms?', 76, TRUE, 6, 3, 3),  -- Physics, Bob
+('MySQL vs PostgreSQL for large applications', 'Which database system would be better for a large-scale application and why?', 123, FALSE, 9, 2, 1);  -- Computer Science, John
+-- Answers (FIFTH - AFTER Questions exist)
+INSERT INTO Answer (body, is_accepted, score, question_id, user_id) VALUES
+-- Answers for Question 1
+('Use EXPLAIN to analyze your query execution plan. Look for full table scans and add appropriate indexes.', TRUE, 15, 1, 2),
+('Make sure to index columns used in WHERE clauses and JOIN conditions. Also, avoid SELECT * and only fetch needed columns.', FALSE, 8, 1, 3),
+('Consider using query caching and optimizing your database configuration settings like buffer pool size.', FALSE, 5, 1, 4),
+
+-- Answers for Question 2
+('First, find the antiderivative: F(x) = x³ + x² - x. Then evaluate F(5) - F(0) = (125 + 25 - 5) - 0 = 145', TRUE, 12, 2, 1),
+('Remember that ∫(3x²)dx = x³, ∫(2x)dx = x², and ∫(-1)dx = -x. Apply the power rule for each term.', FALSE, 6, 2, 5),
+
+-- Answers for Question 3
+('Make sure your app.listen() call comes after all route definitions. Also check your base path configuration.', TRUE, 18, 3, 2),
+('You might have a middleware that is not calling next(). Check your middleware order and implementation.', FALSE, 9, 3, 4),
+('Try using console.log to debug the route registration order. Sometimes the order matters.', FALSE, 4, 3, 1),
+
+-- Answers for Question 4
+('Use the formula: h = v²/(2g) where v=20 m/s and g=9.8 m/s². So h = 400/(19.6) ≈ 20.41 meters', TRUE, 7, 4, 3),
+('At maximum height, final velocity is 0. Use v² = u² - 2gh to solve for h.', FALSE, 3, 4, 5),
+
+-- Answers for Question 5
+('1NF: Each column atomic - no arrays/lists. 2NF: No partial dependencies. 3NF: No transitive dependencies.', TRUE, 20, 5, 1),
+('Example: Student table with multiple phone numbers violates 1NF. Split into separate rows or table.', FALSE, 11, 5, 2),
+
+-- Answers for Question 6
+('Async/await is syntactic sugar for Promises. Use async/await for cleaner code, but understand Promises first.', TRUE, 25, 6, 3),
+('Remember: async functions always return Promises. Await can only be used inside async functions.', FALSE, 14, 6, 4),
+
+-- Answers for Question 7
+('Basis vectors form a coordinate system. In 2D, i=(1,0) and j=(0,1) are standard basis vectors.', TRUE, 5, 7, 2),
+('Any vector in the space can be written as a linear combination of basis vectors.', FALSE, 2, 7, 5),
+
+-- Answers for Question 8
+('Always hash passwords with salt, use HTTPS, validate input, and implement proper authentication.', TRUE, 22, 8, 1),
+('Don''t forget about CSRF protection, XSS prevention, and regular security updates.', FALSE, 15, 8, 3),
+
+-- Answers for Question 9
+('Quantum entanglement is when particles become connected and affect each other instantly, even at distance.', TRUE, 9, 9, 2),
+('Einstein called it "spooky action at a distance". It challenges our classical understanding of physics.', FALSE, 4, 9, 1),
+
+-- Answers for Question 10
+('PostgreSQL has better support for complex queries, JSON, and spatial data. MySQL is faster for simple reads.', TRUE, 12, 10, 3),
+('Consider your team''s expertise. Both are good choices but have different strengths.', FALSE, 6, 10, 4);
+
+-- Question-Tag relationships (SIXTH - AFTER Questions and Tags exist)
+INSERT INTO QuestionTag (tag_id, question_id) VALUES
+-- Question 1 tags
+(2, 1), (7, 1), -- sql, database
+-- Question 2 tags
+(1, 2), (6, 2), -- algebra, homework-help
+-- Question 3 tags
+(3, 3), (4, 3), (8, 3), -- programming, nodejs, practice
+-- Question 4 tags
+(5, 4), (6, 4), -- mechanics, homework-help
+-- Question 5 tags
+(2, 5), (7, 5), -- sql, theory
+-- Question 6 tags
+(3, 6), (4, 6), (8, 6), -- programming, javascript, practice
+-- Question 7 tags
+(1, 7), (7, 7), -- algebra, theory
+-- Question 8 tags
+(3, 8), (7, 8), -- programming, theory
+-- Question 9 tags
+(5, 9), (7, 9), -- mechanics, theory
+-- Question 10 tags
+(2, 10), (7, 10); -- sql, theory
+
+-- Comments on questions and answers (SEVENTH)
+INSERT INTO Comment (body, user_id, question_id, answer_id) VALUES
+-- Comments on questions
+('Great question! I had the same issue last week.', 2, 1, NULL),
+('Could you provide more details about your table structure?', 3, 1, NULL),
+('This is a common problem in introductory calculus.', 1, 2, NULL),
+
+-- Comments on answers
+('This solved my problem, thank you!', 4, NULL, 1),
+('What about using composite indexes?', 5, NULL, 1),
+('Don''t forget the constant of integration!', 2, NULL, 4),
+('Excellent explanation of the physics concept.', 1, NULL, 8),
+('What about connection pooling for optimization?', 3, NULL, 3);
+
+-- Votes on questions and answers (EIGHTH)
+INSERT INTO Votes (vote_type, user_id, question_id, answer_id) VALUES
+-- Question votes (using users 1-5)
+('upvote', 2, 1, NULL), ('upvote', 3, 1, NULL), ('upvote', 4, 1, NULL), ('upvote', 5, 1, NULL),
+('upvote', 1, 2, NULL), ('upvote', 3, 2, NULL), ('downvote', 4, 2, NULL),
+('upvote', 1, 3, NULL), ('upvote', 2, 3, NULL), ('upvote', 4, 3, NULL), ('upvote', 5, 3, NULL),
+('upvote', 2, 4, NULL), ('upvote', 3, 4, NULL),
+('upvote', 1, 5, NULL), ('upvote', 2, 5, NULL), ('upvote', 3, 5, NULL), ('upvote', 4, 5, NULL),
+
+-- Answer votes (using users 1-5)
+('upvote', 1, NULL, 1), ('upvote', 3, NULL, 1), ('upvote', 4, NULL, 1), ('upvote', 5, NULL, 1),
+('upvote', 2, NULL, 2), ('upvote', 4, NULL, 2),
+('upvote', 1, NULL, 4), ('upvote', 2, NULL, 4), ('upvote', 5, NULL, 4),
+('upvote', 3, NULL, 7), ('upvote', 4, NULL, 7), ('upvote', 5, NULL, 7),
+('upvote', 1, NULL, 11), ('upvote', 2, NULL, 11), ('upvote', 3, NULL, 11), ('upvote', 4, NULL, 11),
+('upvote', 2, NULL, 13), ('upvote', 4, NULL, 13), ('upvote', 5, NULL, 13);
 
 COMMIT;
