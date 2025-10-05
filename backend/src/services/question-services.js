@@ -5,7 +5,6 @@ class QuestionService {
         try {
             console.log(`Creating question...`);
 
-            // Real DB query - matches your ERD
             const [result] = await pool.execute(
                 `INSERT INTO Question (title, body, user_id, course_id, is_anonymous) 
                  VALUES (?, ?, ?, ?, ?)`,

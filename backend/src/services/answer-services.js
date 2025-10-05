@@ -5,7 +5,6 @@ class AnswerService {
         try {
             console.log(`Creating answer...`);
 
-            // Real DB query - matches your ERD
             const [result] = await pool.execute(
                 `INSERT INTO Answer (body, question_id, user_id, is_anonymous) 
                  VALUES (?, ?, ?, ?)`,
@@ -165,7 +164,7 @@ async rateAnswer(data) {
                 [data.userId, data.answerId]
             );
 
-            // Use string values that match your ENUM
+            // Use string values that match your DB ENUM
             const voteType = data.type === 1 ? 'upvote' : 'downvote';
             let scoreChange = 0;
 
