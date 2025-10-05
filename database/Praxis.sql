@@ -263,13 +263,3 @@ INSERT INTO Tag (name) VALUES
 ('homework');
 
 COMMIT;
-
--- Create user if it doesn't exist
-CREATE USER IF NOT EXISTS 'myuser'@'%' IDENTIFIED BY 'supersecretpassword';
-
--- Grant all privileges on your database
-GRANT ALL PRIVILEGES ON mydatabase.* TO 'myuser'@'%';
-
--- Apply privileges
-FLUSH PRIVILEGES;
-

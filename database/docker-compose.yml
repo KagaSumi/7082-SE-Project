@@ -7,7 +7,7 @@ services:
     env_file:
       - .env
     volumes:
-      - mysql-data:/var/lib/mysql
+      - Praxis-data:/var/lib/mysql
 
 volumes:
-  mysql-data:
+  Praxis-data:
