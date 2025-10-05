@@ -2,7 +2,7 @@ const genericHelper = require("../helper-functions/generic-helper");
 const dummyDB = require("../enums/dummy-db");
 startId = 11;
 
-class QuestionService {
+class AnswerService {
     async createAnswer(data) {
         try {
             console.log(`Creating answer...`);
@@ -119,4 +119,4 @@ class QuestionService {
     }
 }
 
-module.exports = new QuestionService();
+module.exports = new AnswerService();
