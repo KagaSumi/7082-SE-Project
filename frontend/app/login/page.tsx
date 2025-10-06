@@ -1,20 +1,22 @@
 "use client";
 import React, { useState } from "react";
+import Link from "next/link";
+import { useAuth } from "../../components/AuthContext";
 import { useRouter } from "next/navigation";
 import Card from "../../components/Card/Card";
 import PillButton from "../../components/Card/PillButton";
 
 const users = [
-  { username: "sarah", password: "password123" },
+  { username: "alice", password: "123" },
   { username: "alex", password: "letmein" },
 ];
-
 export default function LoginPage() {
   const router = useRouter();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
+  const { login } = useAuth();
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -24,6 +26,7 @@ export default function LoginPage() {
     if (found) {
       setSuccess(true);
       setError(null);
+      login();
       setTimeout(() => {
         router.push("/");
       }, 1000); // Optional: show success for a moment before redirect
@@ -37,12 +40,14 @@ export default function LoginPage() {
     <div className="min-h-screen bg-slate-50 flex flex-col items-center">
       {/* Logo and heading */}
       <div className="flex flex-col items-center mt-12 mb-6">
-        <div className="flex items-center gap-2 mb-2">
-          <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-blue-600 text-white text-3xl font-bold">
-            π
+        <Link href="/" className="flex flex-col items-center">
+          <div className="flex items-center gap-2 mb-2">
+            <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-blue-600 text-white text-3xl font-bold">
+              π
+            </div>
+            <span className="text-3xl font-semibold text-slate-900">Praxis</span>
           </div>
-          <span className="text-3xl font-semibold text-slate-900">Praxis</span>
-        </div>
+        </Link>
         <h1 className="text-2xl font-semibold text-slate-800 mt-2 mb-2">
           Log in to your account
         </h1>

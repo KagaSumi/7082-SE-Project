@@ -10,16 +10,18 @@ import Card from "../components/Card/Card";
 import Navbar from "../components/Navbar";
 import PillButton from "../components/Card/PillButton";
 import Stat from "../components/Card/Stat";
+import HomeClient from "../components/HomeClient";
 import Sidebar from "../components/Sidebar";
 
 export default async function PraxisPage() {
-  const res = await fetch("http://localhost:3000/api/questions");
 
+  const res = await fetch("http://localhost:3000/api/questions");
   if (!res.ok) throw new Error("Failed to fetch Question");
   const questionsJson: Array<Question> = await res.json();
 
   questionsJson.forEach((question) => {
     console.log(question);
+    question.isAnonymous = question.isAnonymous ? true : false;
     const parseResult = QuestionModel.safeParse(question);
     if (!parseResult.success) {
       console.error(parseResult.error);
@@ -73,7 +75,7 @@ export default async function PraxisPage() {
 
         {/* Main Feed */}
         <section className="space-y-6">
-          <Card>
+          {/* <Card>
             <div className="flex flex-row gap-3">
               <input
                 placeholder="Ask a new question..."
@@ -100,7 +102,7 @@ export default async function PraxisPage() {
                 </svg>
               </button>
             </div>
-          </Card>
+          </Card> */} {/* hiding this for demo. Eventually should take user input and route to the question/create page with data as title */}
 
           <Card>
             <div className="flex flex-col gap-4 p-2">
@@ -127,51 +129,8 @@ export default async function PraxisPage() {
           </Card>
         </section>
 
-        {/* Right Sidebar */}
-        <aside className="hidden lg:block">
-          <div className="sticky top-20 space-y-6">
-            <Card>
-              <div className="flex items-center gap-4">
-                <img
-                  alt="Jane Smith"
-                  className="h-16 w-16 rounded-full object-cover"
-                  src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=140&auto=format&fit=crop"
-                />
-                <div>
-                  <div className="text-lg font-semibold text-slate-900">
-                    Jane Smith
-                  </div>
-                  <div className="text-xs text-slate-500">Student</div>
-                </div>
-              </div>
-              <div className="mt-4 grid grid-cols-3 gap-2">
-                <Stat label="Questions" value={5} />
-                <Stat label="Answers" value={20} />
-                <Stat label="Reputation" value={128} />
-              </div>
-            </Card>
-
-            <Card>
-              <div className="mb-3 text-sm font-semibold text-slate-900">
-                Recent Activity
-              </div>
-              <div className="space-y-3 text-sm">
-                <div>
-                  <div className="text-slate-500">Answered:</div>
-                  <a href="#" className="text-slate-800 hover:underline">
-                    Integration by parts
-                  </a>
-                </div>
-                <div>
-                  <div className="text-slate-500">Asked:</div>
-                  <a href="#" className="text-slate-800 hover:underline">
-                    Why does B.I.O matter in algorithms?
-                  </a>
-                </div>
-              </div>
-            </Card>
-          </div>
-        </aside>
+  {/* Right Sidebar (Client Component) */}
+  <HomeClient />
       </main>
     </div>
   );

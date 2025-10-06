@@ -6,21 +6,9 @@ import ViewPostCard from "../../components/ViewPostCard";
 
 
 const courses = [
-  { id: 1, name: "COMP 1510" },
-  { id: 2, name: "COMP 1537" },
-  { id: 3, name: "COMP 2510" },
-  { id: 4, name: "COMP 2521" },
-  { id: 5, name: "MATH 3042" },
-  { id: 6, name: "COMM 1140" },
-  { id: 7, name: "COMM 2216" },
-  { id: 8, name: "BUSA 2150" },
-  { id: 9, name: "OPMT 1197" },
-  { id: 10, name: "LIBS 7001" },
-  { id: 11, name: "COMP 3717" },
-  { id: 12, name: "COMP 4736" },
-  { id: 13, name: "COMP 4916" },
-  { id: 14, name: "COMP 7000" },
-  { id: 15, name: "COMP 8001" },
+  { id: 1, name: "MATH 3042 (Calculus)" },
+  { id: 2, name: "COMP 1537 (Web Dev)" },
+  { id: 3, name: "PHYS 3560 (Quantum Mechanics)" },
 ];
 
 

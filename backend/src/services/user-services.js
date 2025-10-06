@@ -2,6 +2,21 @@ const { pool } = require("./database");
 const bcrypt = require("bcrypt");
 
 class UserService {
+    async getUserById(userId) {
+        try {
+            const [users] = await pool.execute(
+                `SELECT user_id, first_name, last_name, email FROM User WHERE user_id = ?`,
+                [userId]
+            );
+            if (users.length === 0) {
+                return null;
+            }
+            return users[0];
+        } catch (err) {
+            console.error('Get user by id error:', err);
+            throw new Error(err.message);
+        }
+    }
     async signup(data) {
         try {
             console.log(`Registering user...`);
@@ -9,7 +24,7 @@ class UserService {
             // Generate salt and hash password
             const salt = await bcrypt.genSalt(10);
             const hashedPassword = await bcrypt.hash(data.password, salt);
-
+            console.log("User data:", data);
             // Insert user into DB
             const [result] = await pool.execute(
                 `INSERT INTO User (first_name, last_name, email, password, salt, student_id) 

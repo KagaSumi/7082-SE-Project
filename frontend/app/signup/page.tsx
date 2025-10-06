@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import Card from "../../components/Card/Card";
 import PillButton from "../../components/Card/PillButton";
 import { useRouter } from "next/navigation";
+import Link from "next/dist/client/link";
 
 // Validation regex
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -13,7 +14,7 @@ export default function SignupPage() {
   const router = useRouter();
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
-  const [studentNo, setStudentNo] = useState("");
+  const [studentId, setStudentNo] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
@@ -23,8 +24,8 @@ export default function SignupPage() {
   function splitName(name: string) {
     const parts = name.trim().split(" ");
     return {
-      first_name: parts[0] || "",
-      last_name: parts.slice(1).join(" ") || "",
+      firstName: parts[0] || "",
+      lastName: parts.slice(1).join(" ") || "",
     };
   }
 
@@ -43,12 +44,12 @@ export default function SignupPage() {
       setSuccess(false);
       return;
     }
-    if (!studentNoRegex.test(studentNo.trim())) {
+    if (!studentNoRegex.test(studentId.trim())) {
       setError("Student number must start with 'A0' and be followed by 7 digits.");
       setSuccess(false);
       return;
     }
-    if (!fullName || !email || !studentNo || !password) {
+    if (!fullName || !email || !studentId || !password) {
       setError("Please fill in all fields.");
       setSuccess(false);
       return;
@@ -60,17 +61,17 @@ export default function SignupPage() {
     }
 
     // Prepare user object according to schema
-    const { first_name, last_name } = splitName(fullName);
+    const { firstName, lastName } = splitName(fullName);
     const user = {
-      first_name,
-      last_name,
+      firstName,
+      lastName,
       password,
       email,
-      student_no: studentNo,
+      studentId: studentId,
     };
 
     try {
-      const res = await fetch("http://localhost:3000/api/users/createUser", {
+      const res = await fetch("http://localhost:3000/api/users/signup", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(user),
@@ -78,7 +79,7 @@ export default function SignupPage() {
 
       if (!res.ok) {
         const data = await res.json().catch(() => ({}));
-        setError(data.message || "Failed to create user.");
+        setError(data.message || "LOCALFailed to create user.");
         setSuccess(false);
         return;
       }
@@ -86,7 +87,7 @@ export default function SignupPage() {
       setError(null);
       setSuccess(true);
       setTimeout(() => {
-        router.push("/login");
+        router.push("/");
       }, 1200);
     } catch (err) {
       setError("Network error. Please try again.");
@@ -97,17 +98,22 @@ export default function SignupPage() {
   return (
     <div className="min-h-screen bg-slate-50 flex flex-col items-center">
       {/* Logo and heading */}
+      
+
       <div className="flex flex-col items-center mt-12 mb-6">
-        <div className="flex items-center gap-2 mb-2">
-          <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-blue-600 text-white text-3xl font-bold">
-            π
+        <Link href="/" className="flex flex-col items-center">
+          <div className="flex items-center gap-2 mb-2">
+            <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-blue-600 text-white text-3xl font-bold">
+              π
+            </div>
+            <span className="text-3xl font-semibold text-slate-900">Praxis</span>
           </div>
-          <span className="text-3xl font-semibold text-slate-900">Praxis</span>
-        </div>
+        </Link>
         <h1 className="text-2xl font-semibold text-slate-800 mt-2 mb-2 italic">
           Sign up today!
         </h1>
       </div>
+      
       {/* Signup Card */}
       <Card>
         <form
@@ -148,7 +154,7 @@ export default function SignupPage() {
               type="text"
               className="w-full rounded-lg border border-slate-300 px-3 py-2 text-base focus:ring-2 focus:ring-blue-500 outline-none"
               placeholder="e.g. A01234567"
-              value={studentNo}
+              value={studentId}
               onChange={(e) => setStudentNo(e.target.value)}
               required
             />

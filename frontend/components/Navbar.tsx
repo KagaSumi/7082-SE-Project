@@ -1,7 +1,11 @@
+"use client";
 import React from "react";
+import { useAuth } from "./AuthContext";
 import Link from "next/link";
 
+
 export default function Navbar() {
+  const { isLoggedIn } = useAuth();
   return (
     <header className="sticky top-0 z-20 border-b border-slate-200 bg-white/70 backdrop-blur">
       <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3 sm:px-6 lg:px-8">
@@ -70,15 +74,42 @@ export default function Navbar() {
                 <path d="M12 5v14M5 12h14" />
               </svg>
             </button></Link>
-            <Link
-            href="/profile"
-            className="text-slate-700 hover:text-blue-600 font-medium"
-          >
-          <img
-            alt="User avatar"
-            className="h-9 w-9 rounded-full object-cover cursor-pointer"
-            src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=140&auto=format&fit=crop"
-          /></Link>
+            {isLoggedIn ? (
+              <Link
+                href="/profile"
+                className="text-slate-700 hover:text-blue-600 font-medium"
+              >
+                <img
+                  alt="User avatar"
+                  className="h-9 w-9 rounded-full object-cover cursor-pointer"
+                  src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=140&auto=format&fit=crop"
+                />
+              </Link>
+            ) : (
+              <Link
+                href="/login"
+                className="text-slate-700 hover:text-blue-600 font-medium"
+                title="Login"
+              >
+                <div className="h-9 w-9 flex items-center justify-center rounded-full bg-slate-200 cursor-pointer">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    strokeWidth={1.5}
+                    stroke="currentColor"
+                    className="w-6 h-6 text-slate-600"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M12 17.25c2.485 0 4.5-2.015 4.5-4.5s-2.015-4.5-4.5-4.5-4.5 2.015-4.5 4.5 2.015 4.5 4.5 4.5zm0 0v1.5m0-1.5a6 6 0 100-12 6 6 0 000 12z"
+                    />
+                    <text x="7" y="16" fontSize="10" fill="currentColor">?</text>
+                  </svg>
+                </div>
+              </Link>
+            )}
         </div>
       </div>
     </header>
