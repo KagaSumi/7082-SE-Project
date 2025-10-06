@@ -10,7 +10,6 @@ class UserService {
             const salt = await bcrypt.genSalt(10);
             const hashedPassword = await bcrypt.hash(data.password, salt);
 
-            console.log(data);
             // Insert user into DB
             const [result] = await pool.execute(
                 `INSERT INTO User (first_name, last_name, email, password, salt, student_id) 
