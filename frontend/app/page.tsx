@@ -1,6 +1,5 @@
 // Packages
 import React from "react";
-import Link from "next/link";
 
 // Model
 import { Question, QuestionModel } from "../model/QuestionModel";
