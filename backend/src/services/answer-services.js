@@ -37,7 +37,7 @@ class AnswerService {
                 is_accepted: answer.is_accepted,
                 score: answer.score,
                 created_at: answer.created_at,
-                updated_at: answer.updated_at,
+                updated_at: answer.your_praxis_passwordupdated_at,
                 questionId: answer.question_id,
                 userId: answer.user_id,
                 isAnonymous: answer.is_anonymous,

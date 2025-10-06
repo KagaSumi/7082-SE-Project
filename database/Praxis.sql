@@ -8,6 +8,7 @@ CREATE TABLE User (
     first_name VARCHAR(50) NOT NULL,
     last_name VARCHAR(50) NOT NULL,
     password VARCHAR(255) NOT NULL,
+    student_id VARCHAR(50), 
     salt VARCHAR(50) NOT NULL,
     email VARCHAR(100) UNIQUE NOT NULL,
     score INT DEFAULT 0,
@@ -308,12 +309,13 @@ CREATE INDEX idx_questiontag_tag ON QuestionTag(tag_id);
 -- =============================================
 
 -- Additional Users (FIRST)
-INSERT INTO User (first_name, last_name, password, salt, email, score) VALUES
-('Alice', 'Brown', 'hashed_password_4', 'salt4', 'alice.brown@email.com', 25),
-('Charlie', 'Wilson', 'hashed_password_5', 'salt5', 'charlie.wilson@email.com', 42),
-('Diana', 'Lee', 'hashed_password_6', 'salt6', 'diana.lee@email.com', 18),
-('Ethan', 'Davis', 'hashed_password_7', 'salt7', 'ethan.davis@email.com', 35),
-('Fiona', 'Garcia', 'hashed_password_8', 'salt8', 'fiona.garcia@email.com', 12);
+INSERT INTO User (first_name, last_name, password, salt, email, score, student_id) VALUES
+('Alice', 'Brown', 'hashed_password_4', 'salt4', 'alice.brown@email.com', 25, 'A00000901'),
+('Charlie', 'Wilson', 'hashed_password_5', 'salt5', 'charlie.wilson@email.com', 42, 'A80155132'),
+('Diana', 'Lee', 'hashed_password_6', 'salt6', 'diana.lee@email.com', 18, 'A01254623'),
+('Ethan', 'Davis', 'hashed_password_7', 'salt7', 'ethan.davis@email.com', 35, 'A05000901'),
+('Fiona', 'Garcia', 'hashed_password_8', 'salt8', 'fiona.garcia@email.com', 12, 'A05910234');
+
 
 -- Additional Courses (SECOND)
 INSERT INTO Course (name, code) VALUES
