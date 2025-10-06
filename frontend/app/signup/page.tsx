@@ -4,7 +4,7 @@ import Card from "../../components/Card/Card";
 import PillButton from "../../components/Card/PillButton";
 import { useRouter } from "next/navigation";
 
-// Simple email and name validation regex
+// Validation regex
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const nameRegex = /^[a-zA-Z\s'-]{2,}$/;
 const studentNoRegex = /^a0\d{7}$/i;
@@ -19,7 +19,16 @@ export default function SignupPage() {
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  // Split full name into first and last name for the schema
+  function splitName(name: string) {
+    const parts = name.trim().split(" ");
+    return {
+      first_name: parts[0] || "",
+      last_name: parts.slice(1).join(" ") || "",
+    };
+  }
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     if (!nameRegex.test(fullName.trim())) {
@@ -49,11 +58,40 @@ export default function SignupPage() {
       setSuccess(false);
       return;
     }
-    setError(null);
-    setSuccess(true);
-    setTimeout(() => {
-      router.push("/profile");
-    }, 1200);
+
+    // Prepare user object according to schema
+    const { first_name, last_name } = splitName(fullName);
+    const user = {
+      first_name,
+      last_name,
+      password,
+      email,
+      student_no: studentNo,
+    };
+
+    try {
+      const res = await fetch("http://localhost:3000/api/users/createUser", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(user),
+      });
+
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        setError(data.message || "Failed to create user.");
+        setSuccess(false);
+        return;
+      }
+
+      setError(null);
+      setSuccess(true);
+      setTimeout(() => {
+        router.push("/login");
+      }, 1200);
+    } catch (err) {
+      setError("Network error. Please try again.");
+      setSuccess(false);
+    }
   };
 
   return (

@@ -47,30 +47,38 @@ export default function Navbar() {
               Tags
             </Link>
           </nav>
-          <button
-            title="Create a question"
-            aria-label="New Question"
-            className="hidden rounded-xl border border-slate-200 p-2 cursor-pointer hover:bg-slate-100 md:block"
+          <Link
+            href="/question/create"
+            className="text-slate-700 hover:text-blue-600 font-medium"
           >
-            <svg
-              width="20"
-              height="20"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              className="text-slate-700"
+            <button
+              title="Create a question"
+              aria-label="New Question"
+              className="hidden rounded-xl border border-slate-200 p-2 cursor-pointer hover:bg-slate-100 md:block"
             >
-              <path d="M12 5v14M5 12h14" />
-            </svg>
-          </button>
+              <svg
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                className="text-slate-700"
+              >
+                <path d="M12 5v14M5 12h14" />
+              </svg>
+            </button></Link>
+            <Link
+            href="/profile"
+            className="text-slate-700 hover:text-blue-600 font-medium"
+          >
           <img
             alt="User avatar"
             className="h-9 w-9 rounded-full object-cover cursor-pointer"
             src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=140&auto=format&fit=crop"
-          />
+          /></Link>
         </div>
       </div>
     </header>

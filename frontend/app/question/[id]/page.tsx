@@ -33,6 +33,7 @@ export default async function QuestionIdPage({
   const result = QuestionModel.safeParse(questionJson);
   if (!result.success) {
     console.error(result.error);
+    console.log(questionJson);
     throw new Error("Invalid thread data received from API");
   }
 

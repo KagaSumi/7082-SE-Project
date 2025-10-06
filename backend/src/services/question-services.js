@@ -14,7 +14,7 @@ class QuestionService {
             throw new Error(err.message);
         }
 
-        question = {
+        let question = {
             "questionId": ++questionStartId,
             "title": data.title,
             "content": data.content,
