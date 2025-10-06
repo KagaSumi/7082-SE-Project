@@ -1,13 +1,11 @@
 import React from "react";
-
-// components
 import Link from "next/link";
 
 export default function Navbar() {
   return (
     <header className="sticky top-0 z-20 border-b border-slate-200 bg-white/70 backdrop-blur">
       <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3 sm:px-6 lg:px-8">
-        {/** Site header */}
+        {/* Site header */}
         <div className="flex items-center gap-3">
           <Link href="/">
             <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-blue-600 text-white">
@@ -19,7 +17,7 @@ export default function Navbar() {
           </Link>
         </div>
 
-        {/** Search bar */}
+        {/* Search bar */}
         <div className="min-w-[70%] lg:min-w-[50%]">
           <input
             placeholder="Search..."
@@ -27,32 +25,60 @@ export default function Navbar() {
           />
         </div>
 
-        {/** Profie / Create new question */}
-        <div className="ml-4 flex items-center gap-3">
-          <button
-            title="Create a question"
-            aria-label="New Question"
-            className="hidden rounded-xl border border-slate-200 p-2 cursor-pointer hover:bg-slate-100 md:block"
-          >
-            <svg
-              width="20"
-              height="20"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              className="text-slate-700"
+        {/* Nav links and profile */}
+        <div className="ml-4 flex items-center gap-6">
+          <nav className="hidden md:flex items-center gap-6">
+            <Link
+              href="/"
+              className="text-slate-700 hover:text-blue-600 font-medium"
             >
-              <path d="M12 5v14M5 12h14" />
-            </svg>
-          </button>
+              Posts
+            </Link>
+            <Link
+              href="/courses"
+              className="text-slate-700 hover:text-blue-600 font-medium"
+            >
+              Courses
+            </Link>
+            <Link
+              href="/tags"
+              className="text-slate-700 hover:text-blue-600 font-medium"
+            >
+              Tags
+            </Link>
+          </nav>
+          <Link
+            href="/question/create"
+            className="text-slate-700 hover:text-blue-600 font-medium"
+          >
+            <button
+              title="Create a question"
+              aria-label="New Question"
+              className="hidden rounded-xl border border-slate-200 p-2 cursor-pointer hover:bg-slate-100 md:block"
+            >
+              <svg
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                className="text-slate-700"
+              >
+                <path d="M12 5v14M5 12h14" />
+              </svg>
+            </button></Link>
+            <Link
+            href="/profile"
+            className="text-slate-700 hover:text-blue-600 font-medium"
+          >
           <img
             alt="User avatar"
             className="h-9 w-9 rounded-full object-cover cursor-pointer"
             src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=140&auto=format&fit=crop"
-          />
+          /></Link>
         </div>
       </div>
     </header>

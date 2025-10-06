@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { AnswerModel } from "./AnswerModel";
 
 const QuestionModel = z.object({
   questionId: z.number(),
@@ -12,6 +13,7 @@ const QuestionModel = z.object({
   isAnonymous: z.boolean(),
   createdAt: z.string(),
   updatedAt: z.string(),
+  answers: z.array(AnswerModel)
 });
 
 type Question = z.infer<typeof QuestionModel>;
