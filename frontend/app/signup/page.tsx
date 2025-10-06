@@ -18,8 +18,9 @@ export default function SignupPage() {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
+  const [loading, setLoading] = useState(false);
 
-  // Split full name into first and last name for the schema
+  // Split full name into first and last name for backend
   function splitName(name: string) {
     const parts = name.trim().split(" ");
     return {
@@ -30,67 +31,67 @@ export default function SignupPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setError(null);
 
+    // === Frontend validation ===
     if (!nameRegex.test(fullName.trim())) {
-      setError(
-        "Please enter a valid name (letters, spaces, apostrophes, and hyphens only)."
-      );
-      setSuccess(false);
+      setError("Please enter a valid name (letters, spaces, apostrophes, and hyphens only).");
       return;
     }
     if (!emailRegex.test(email)) {
       setError("Please enter a valid email address.");
-      setSuccess(false);
       return;
     }
     if (!studentNoRegex.test(studentNo.trim())) {
       setError("Student number must start with 'A0' and be followed by 7 digits.");
-      setSuccess(false);
       return;
     }
     if (!fullName || !email || !studentNo || !password) {
       setError("Please fill in all fields.");
-      setSuccess(false);
       return;
     }
     if (password !== confirmPassword) {
       setError("Passwords do not match.");
-      setSuccess(false);
       return;
     }
 
-    // Prepare user object according to schema
+    // Prepare payload for backend
     const { first_name, last_name } = splitName(fullName);
-    const user = {
-      first_name,
-      last_name,
-      password,
+    const payload = {
+      firstName: first_name,
+      lastName: last_name,
       email,
-      student_no: studentNo,
+      studentId: studentNo, // matches backend column name
+      password,
     };
 
     try {
-      const res = await fetch("http://localhost:3000/api/users/createUser", {
+      setLoading(true);
+      const res = await fetch("http://localhost:3000/api/users/signup", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(user),
+        body: JSON.stringify(payload),
       });
 
+      const data = await res.json().catch(() => ({}));
+
       if (!res.ok) {
-        const data = await res.json().catch(() => ({}));
-        setError(data.message || "Failed to create user.");
-        setSuccess(false);
-        return;
+        throw new Error(data.message || "Failed to create account.");
       }
 
-      setError(null);
       setSuccess(true);
+      setError(null);
+      setLoading(false);
+
+      // Redirect to login after success
       setTimeout(() => {
         router.push("/login");
       }, 1200);
-    } catch (err) {
-      setError("Network error. Please try again.");
+    } catch (err: any) {
+      console.error("Signup error:", err);
+      setError(err.message || "Network error. Please try again.");
       setSuccess(false);
+      setLoading(false);
     }
   };
 
@@ -108,6 +109,7 @@ export default function SignupPage() {
           Sign up today!
         </h1>
       </div>
+
       {/* Signup Card */}
       <Card>
         <form
@@ -127,6 +129,7 @@ export default function SignupPage() {
               required
             />
           </div>
+
           <div>
             <label className="block text-sm font-medium text-slate-700 mb-1">
               Email
@@ -140,6 +143,7 @@ export default function SignupPage() {
               required
             />
           </div>
+
           <div>
             <label className="block text-sm font-medium text-slate-700 mb-1">
               Student Number
@@ -153,6 +157,7 @@ export default function SignupPage() {
               required
             />
           </div>
+
           <div>
             <label className="block text-sm font-medium text-slate-700 mb-1">
               Password
@@ -166,9 +171,10 @@ export default function SignupPage() {
               required
             />
           </div>
+
           <div>
             <label className="block text-sm font-medium text-slate-700 mb-1">
-              Confirm password
+              Confirm Password
             </label>
             <input
               type="password"
@@ -179,6 +185,7 @@ export default function SignupPage() {
               required
             />
           </div>
+
           {error && (
             <div className="text-red-600 text-sm text-center">{error}</div>
           )}
@@ -187,11 +194,15 @@ export default function SignupPage() {
               Signup successful! Redirecting...
             </div>
           )}
+
           <div>
-            <PillButton type="submit">Submit</PillButton>
+            <PillButton type="submit" disabled={loading}>
+              {loading ? "Creating account..." : "Sign Up"}
+            </PillButton>
           </div>
         </form>
       </Card>
+
       <div className="mt-4 text-center text-slate-700">
         Already have an account?{" "}
         <a
@@ -204,3 +215,4 @@ export default function SignupPage() {
     </div>
   );
 }
+
