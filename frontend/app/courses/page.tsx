@@ -4,80 +4,52 @@ import Navbar from "../../components/Navbar";
 import Card from "../../components/Card/Card";
 import ViewPostCard from "../../components/ViewPostCard";
 
-// Placeholder data
+
 const courses = [
-  "COMP 1510",
-  "COMP 1537",
-  "COMP 2510",
-  "COMP 2521",
-  "MATH 3042",
-  "COMM 1140",
-  "COMM 2216",
-  "BUSA 2150",
-  "OPMT 1197",
-  "LIBS 7001",
+  { id: 1, name: "COMP 1510" },
+  { id: 2, name: "COMP 1537" },
+  { id: 3, name: "COMP 2510" },
+  { id: 4, name: "COMP 2521" },
+  { id: 5, name: "MATH 3042" },
+  { id: 6, name: "COMM 1140" },
+  { id: 7, name: "COMM 2216" },
+  { id: 8, name: "BUSA 2150" },
+  { id: 9, name: "OPMT 1197" },
+  { id: 10, name: "LIBS 7001" },
+  { id: 11, name: "COMP 3717" },
+  { id: 12, name: "COMP 4736" },
+  { id: 13, name: "COMP 4916" },
+  { id: 14, name: "COMP 7000" },
+  { id: 15, name: "COMP 8001" },
 ];
 
-const posts = [
-  {
-    id: 1,
-    title: "How do you create prefabs in unity?",
-    tag: ["Game Dev"],
-    author: "Sarah Howard",
-    time: "2h ago",
-    content:
-      "I am making a spider survival game and i really need to get the animations looking good! But animations are very tricky for our 8 legged friends.",
-    votes: 12,
-    replies: 3,
-    views: 25,
-    course: "COMP 1510",
-  },
-  {
-    id: 2,
-    title: "What’s the difference between logical and relative memory addresses?",
-    tag: ["Programming"],
-    author: "Sarah Howard",
-    time: "5h ago",
-    content:
-      "I know what absolute memory addresses are but I don't really understand the distinctions between logical and relative addresses. They seem to be almost the same thing to me? If anyone could give me a concrete example that would be amazing.",
-    votes: 8,
-    replies: 2,
-    views: 14,
-    course: "COMP 1537",
-  },
-  {
-    id: 3,
-    title: "What is the chain rule?",
-    tag: ["Calculus"],
-    author: "Alex Kim",
-    time: "1d ago",
-    content:
-      "Can someone explain the chain rule in calculus with a simple example?",
-    votes: 5,
-    replies: 1,
-    views: 10,
-    course: "MATH 3042",
-  },
-  {
-    id: 4,
-    title: "How to study for Math 1050?",
-    tag: ["Math"],
-    author: "Jamie Lee",
-    time: "3d ago",
-    content:
-      "Any tips for preparing for the Math 1050 final exam?",
-    votes: 2,
-    replies: 0,
-    views: 7,
-    course: "COMP 2510",
-  },
-];
+
+import { useEffect } from "react";
 
 export default function CoursesPage() {
-  const [selectedCourse, setSelectedCourse] = useState<string | null>(null);
+  const [selectedCourse, setSelectedCourse] = useState<number | null>(null);
+  const [posts, setPosts] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function fetchPosts() {
+      setLoading(true);
+      try {
+        const res = await fetch("http://localhost:3000/api/questions");
+        if (!res.ok) throw new Error("Failed to fetch questions");
+        const data = await res.json();
+        setPosts(data);
+      } catch (err) {
+        setPosts([]);
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchPosts();
+  }, []);
 
   const filteredPosts = selectedCourse
-    ? posts.filter((post) => post.course === selectedCourse)
+    ? posts.filter((post) => post.courseId === selectedCourse)
     : [];
 
   return (
@@ -93,12 +65,12 @@ export default function CoursesPage() {
             {!selectedCourse && (
               <ul className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 {courses.map((course) => (
-                  <li key={course}>
+                  <li key={course.id}>
                     <button
                       className="w-full rounded-lg border border-slate-300 bg-white px-4 py-3 text-left text-base font-medium text-slate-800 shadow hover:bg-blue-50 transition"
-                      onClick={() => setSelectedCourse(course)}
+                      onClick={() => setSelectedCourse(course.id)}
                     >
-                      {course}
+                      {course.name}
                     </button>
                   </li>
                 ))}
@@ -113,7 +85,9 @@ export default function CoursesPage() {
                 >
                   ← Back to courses
                 </button>
-                {filteredPosts.length === 0 ? (
+                {loading ? (
+                  <div className="text-slate-500 px-4 py-8 text-center">Loading...</div>
+                ) : filteredPosts.length === 0 ? (
                   <div className="text-slate-500 px-4 py-8 text-center">
                     No posts found for this course.
                   </div>
@@ -121,16 +95,16 @@ export default function CoursesPage() {
                   <div className="flex flex-col gap-5">
                     {filteredPosts.map((p) => (
                       <ViewPostCard
-                        key={p.id}
-                        questionId={p.id}
+                        key={p.questionId}
+                        questionId={p.questionId}
                         title={p.title}
-                        tag={p.tag}
+                        tag={p.tag || []}
                         content={p.content}
-                        username={p.author}
-                        createdAt={p.time}
-                        upvote={p.votes}
-                        views={p.views}
-                        replyCount={p.replies}
+                        username={p.userId}
+                        createdAt={p.createdAt}
+                        upvote={p.upVotes}
+                        views={p.viewCount}
+                        replyCount={0}
                       />
                     ))}
                   </div>
