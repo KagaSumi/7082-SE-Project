@@ -60,17 +60,6 @@ export default function QACard({
           <div className="min-h-25">
             <p>
               {content} <br />
-              <br />
-              Lorem ipsum dolor sit amet consectetur adipisicing elit. Quod
-              eveniet eos veniam blanditiis dicta pariatur ad minus. Doloribus
-              fuga quo deserunt facilis! Ipsum, molestias? Veniam sequi iusto
-              obcaecati mollitia eveniet!
-              <br />
-              <br />
-              Lorem ipsum dolor sit amet consectetur adipisicing elit. Quaerat
-              hic provident perspiciatis! Exercitationem, doloribus, est
-              asperiores deserunt id placeat quasi vel nesciunt velit optio
-              sapiente quod tenetur molestiae? Aliquam, ab.{" "}
             </p>
           </div>
 
