@@ -4,7 +4,7 @@ const ErrorCodes = require("../enums/error-code-enum");
 class UserController {
     signup(req, res) {
         userService
-        .createUser(req.body)
+        .signup(req.body)
         .then((user) => {
             res.json(user);
         })
@@ -15,7 +15,7 @@ class UserController {
 
     signin(req, res) {
         userService
-        .getUser(req.body)
+        .signin(req.body)
         .then((user) => {
             res.json(user);
         })
