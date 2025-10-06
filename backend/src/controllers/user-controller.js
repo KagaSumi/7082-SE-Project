@@ -2,9 +2,9 @@ const userService = require("../services/user-services");
 const ErrorCodes = require("../enums/error-code-enum");
 
 class UserController {
-    createUser(req, res) {
+    signup(req, res) {
         userService
-        .createUser(req.body)
+        .signup(req.body)
         .then((user) => {
             res.json(user);
         })
@@ -13,9 +13,9 @@ class UserController {
         });
     }
 
-    getUser(req, res) {
+    signin(req, res) {
         userService
-        .getUser(req.query.uid)
+        .signin(req.body)
         .then((user) => {
             res.json(user);
         })

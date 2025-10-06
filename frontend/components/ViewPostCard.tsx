@@ -26,6 +26,8 @@ export default function ViewPostCard({
   views: number;
   replyCount: number;
 }) {
+  const questionUrl = `/question/${questionId}`;
+
   return (
     <Card>
       {/** Header */}
@@ -98,7 +100,9 @@ export default function ViewPostCard({
         </div>
 
         {/** Answer button */}
-        <PillButton>Answer</PillButton>
+        <Link href={questionUrl}>
+          <PillButton>Answer</PillButton>
+        </Link>
       </div>
     </Card>
   );

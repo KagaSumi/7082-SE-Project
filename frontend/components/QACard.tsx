@@ -3,6 +3,7 @@ import React from "react";
 
 // Components
 import PillButton from "./Card/PillButton";
+import AnswerForm from "./AnswerForm";
 
 enum QA {
   Answer,
@@ -10,15 +11,19 @@ enum QA {
 }
 
 export default function QACard({
-  id,
+  questionId,
   type,
   totalVotes,
   content,
+  createdAt,
+  username,
 }: {
-  id: number;
+  questionId: number;
   type: QA;
   totalVotes: number;
   content: string;
+  createdAt?: string;
+  username?: string;
 }) {
   return (
     <div className="flex flex-col gap-5">
@@ -68,16 +73,24 @@ export default function QACard({
               sapiente quod tenetur molestiae? Aliquam, ab.{" "}
             </p>
           </div>
+
+          {type === QA.Answer ? (
+            <div className="pt-5 text-slate-500 text-sm flex flex-row justify-between">
+              <div>
+                <p className="cursor-pointer">Edit</p>
+                {/* <p>Delete</p> implemented after auth*/}
+              </div>
+              <div>
+                <p>answered at {createdAt}</p>
+                <p className="cursor-pointer text-blue-500">username goes here</p>
+              </div>
+            </div>
+          ) : null}
         </div>
       </div>
 
-      {/** Answer? */}
-      {type === QA.Question ? (
-        <div className="pl-1">
-          <PillButton>Answer</PillButton>
-          <div></div>
-        </div>
-      ) : null}
+      {/** If queston */}
+      {type === QA.Question ? <AnswerForm questionId={questionId} /> : null}
     </div>
   );
 }

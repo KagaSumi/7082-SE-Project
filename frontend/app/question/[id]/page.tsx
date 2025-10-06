@@ -11,7 +11,7 @@ import PillButton from "../../../components/Card/PillButton";
 import QACard from "../../../components/QACard";
 
 // Models and Types
-import { QuestionModel, Question } from "../../../model/QuestionModel";
+import { QuestionWithAnswerModel, QuestionWithAnswer } from "../../../model/QuestionModel";
 import { Answer } from "../../../model/AnswerModel";
 
 // Enums
@@ -30,14 +30,14 @@ export default async function QuestionIdPage({
   console.log(questionJson);
 
   // validate JSON
-  const result = QuestionModel.safeParse(questionJson);
+  const result = QuestionWithAnswerModel.safeParse(questionJson);
   if (!result.success) {
     console.error(result.error);
     console.log(questionJson);
     throw new Error("Invalid thread data received from API");
   }
 
-  const question: Question = result.data;
+  const question: QuestionWithAnswer = result.data;
   const title: string =
     question.title.charAt(0).toUpperCase() + question.title.slice(1);
   const totalVotes: number = question.upVotes - question.downVotes;
@@ -81,7 +81,7 @@ export default async function QuestionIdPage({
           <Card>
             <div className="py-5 px-1 flex flex-col gap-10">
               <QACard
-                id={question.questionId}
+                questionId={question.questionId}
                 type={QA.Question}
                 content={question.content}
                 totalVotes={totalVotes}
@@ -96,12 +96,15 @@ export default async function QuestionIdPage({
                   const answerTotalVotes = answer.upVotes - answer.downVotes;
 
                   return (
-                    <QACard
-                      id={answer.questionId}
-                      type={QA.Answer}
-                      content={answer.content}
-                      totalVotes={answerTotalVotes}
-                    />
+                      <QACard
+                        key={answer.answerId}
+                        questionId={question.questionId}
+                        type={QA.Answer}
+                        content={answer.content}
+                        totalVotes={answerTotalVotes}
+                        createdAt={answer.createdAt}
+                        username="username goes here"
+                      />
                   );
                 })}
               </div>
