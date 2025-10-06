@@ -5,22 +5,10 @@ import Navbar from "../../../components/Navbar";
 import Card from "../../../components/Card/Card";
 import PillButton from "../../../components/Card/PillButton";
 
-const courses = [//need to do this until course backend stuff is ready
-       { id: 1510, name: "COMP 1510" },
-       { id: 1537, name: "COMP 1537" },
-       { id: 2510, name: "COMP 2510" },
-       { id: 2521, name: "COMP 2521" },
-       { id: 3042, name: "MATH 3042" },
-       { id: 1140, name: "COMM 1140" },
-       { id: 2216, name: "COMM 2216" },
-       { id: 2150, name: "BUSA 2150" },
-       { id: 1197, name: "OPMT 1197" },
-       { id: 7001, name: "LIBS 7001" },
-       { id: 3717, name: "COMP 3717" },
-       { id: 4736, name: "COMP 4736" },
-       { id: 4916, name: "COMP 4916" },
-       { id: 7000, name: "COMP 7000" },
-       { id: 8001, name: "COMP 8001" },
+const courses = [
+  { id: 1, name: "MATH 3042 (Calculus)" },
+  { id: 2, name: "COMP 1537 (Web Dev)" },
+  { id: 3, name: "PHYS 3560 (Quantum Mechanics)" },
 ];
 
 

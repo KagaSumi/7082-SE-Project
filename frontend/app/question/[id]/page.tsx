@@ -28,7 +28,12 @@ export default async function QuestionIdPage({
   const questionJson = await res.json();
 
   console.log(questionJson);
-
+  questionJson.isAnonymous = !!questionJson.isAnonymous;
+  if (Array.isArray(questionJson.answers)) {
+    for (let i = 0; i < questionJson.answers.length; i++) {
+      questionJson.answers[i].isAnonymous = !!questionJson.answers[i].isAnonymous;
+    }
+  }
   // validate JSON
   const result = QuestionWithAnswerModel.safeParse(questionJson);
   if (!result.success) {

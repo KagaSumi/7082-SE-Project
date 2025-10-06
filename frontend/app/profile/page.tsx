@@ -1,12 +1,16 @@
-import React from "react";
+"use client";
+import React, { useEffect, useState } from "react";
+import { useAuth } from "../../components/AuthContext";
+import { useRouter } from "next/navigation";
 import Navbar from "../../components/Navbar";
 import Card from "../../components/Card/Card";
 import ViewPostCard from "../../components/ViewPostCard";
 import PillButton from "../../components/Card/PillButton";
-// Placeholder user data
-const user = {
-  name: "Sarah Heward",
-  email: "Sara.heward@my.bcit.ca",
+
+import { QuestionWithAnswerModel, QuestionWithAnswer } from "../../model/QuestionModel";
+
+// Placeholder user data (for static fields)
+const staticUser = {
   role: "BsACS Student",
   term: "1st Term",
   questions: 5,
@@ -21,61 +25,65 @@ const user = {
   about: "Comp student",
 };
 
-const posts = [
-  {
-    id: 1,
-    title: "How do you create prefabs in unity?",
-    tag: ["Game Dev"],
-    author: "Sarah Heward",
-    time: "2h ago",
-    content:
-      "I am making a spider survival game and i really need to get the animations looking good! But animations are very tricky for our 8 legged friends.",
-    votes: 12,
-    replies: 3,
-    views: 25,
-  },
-  {
-    id: 2,
-    title: "What’s the difference between logical and relative memory addresses?",
-    tag: ["Programming"],
-    author: "Sarah Heward",
-    time: "5h ago",
-    content:
-      "I know what absolute memory addresses are but I dont really understand the distinctions between logical and relative addresses. They seem to be almost the same thing to me? If anyone could give me a concrete example that would be amazing.",
-    votes: 8,
-    replies: 2,
-    views: 14,
-  },
-];
 
-const answers = [
-  {
-    id: 1,
-    title: "How do you create prefabs in unity?",
-    tag: ["Game Dev"],
-    author: "Sarah Heward",
-    time: "1h ago",
-    content:
-      "I am making a spider survival game and i really need to get the animations looking good! But animations are very tricky for our 8 legged friends.",
-    votes: 5,
-    replies: 1,
-    views: 10,
-  },
-  {
-    id: 2,
-    title: "What’s the difference between logical and relative memory addresses?",
-    tag: ["Programming"],
-    author: "Sarah Heward",
-    time: "3h ago",
-    content:
-      "I know what absolute memory addresses are but I dont really understand the distinctions between logical and relative addresses. They seem to be almost the same thing to me? If anyone could give me a concrete example that would be amazing.",
-    votes: 3,
-    replies: 0,
-    views: 7,
-  },
-];
+const userId = 1;
+
 
 export default function ProfilePage() {
+  const { logout } = useAuth();
+  const router = useRouter();
+  const [userQuestions, setUserQuestions] = useState<any[]>([]);
+  const [userAnswers, setUserAnswers] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [user, setUser] = useState<{ first_name: string; last_name: string; email: string } | null>(null);
+
+  useEffect(() => {
+    async function fetchQuestionsAndUser() {
+      setLoading(true);
+      try {
+        // Fetch user info
+        const userRes = await fetch("http://localhost:3000/api/users/1");
+        if (userRes.ok) {
+          setUser(await userRes.json());
+        } else {
+          setUser(null);
+        }
+
+        // Fetch questions
+        const res = await fetch("http://localhost:3000/api/questions");
+        if (!res.ok) throw new Error("Failed to fetch questions");
+        const questionsJson: any[] = await res.json();
+
+        // Only show questions asked by user 1
+        const userQuestions = questionsJson.filter(q => q.userId === userId);
+
+        // Only show answers given by user 1 (from all questions)
+        const userAnswers: Array<{ answer: any; questionTitle: string; questionId: number }> = [];
+        questionsJson.forEach((question) => {
+          question.isAnonymous = !!question.isAnonymous;
+          const result = QuestionWithAnswerModel.safeParse(question);
+          if (result.success && Array.isArray(result.data.answers)) {
+            result.data.answers.forEach((answer) => {
+              if (answer.userId === userId) {
+                userAnswers.push({ answer, questionTitle: question.title, questionId: question.questionId });
+              }
+            });
+          }
+        });
+
+        setUserQuestions(userQuestions);
+        setUserAnswers(userAnswers);
+      } catch (err) {
+        setUserQuestions([]);
+        setUserAnswers([]);
+        setUser(null);
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchQuestionsAndUser();
+  }, []);
+
   return (
     <div className="min-h-screen bg-slate-50">
       <Navbar />
@@ -89,20 +97,26 @@ export default function ProfilePage() {
                 Recent Posts
               </h2>
               <div className="p-1 flex flex-col gap-5">
-                {posts.map((p) => (
-                  <ViewPostCard
-                    key={p.id}
-                    questionId={p.id}
-                    title={p.title}
-                    tag={p.tag}
-                    content={p.content}
-                    username={p.author}
-                    createdAt={p.time}
-                    upvote={p.votes}
-                    views={p.views}
-                    replyCount={p.replies}
-                  />
-                ))}
+                {loading ? (
+                  <span className="text-slate-500">Loading posts...</span>
+                ) : userQuestions.length === 0 ? (
+                  <span className="text-slate-500">No posts found.</span>
+                ) : (
+                  userQuestions.map((p) => (
+                    <ViewPostCard
+                      key={p.questionId}
+                      questionId={p.questionId}
+                      title={p.title}
+                      tag={[]}
+                      content={p.content}
+                      username={user ? `${user.first_name} ${user.last_name}` : "User"}
+                      createdAt={p.createdAt}
+                      upvote={p.upVotes}
+                      views={p.viewCount}
+                      replyCount={p.answerCount}
+                    />
+                  ))
+                )}
               </div>
             </div>
           </Card>
@@ -113,20 +127,26 @@ export default function ProfilePage() {
                 Recent Answers
               </h2>
               <div className="p-1 flex flex-col gap-5">
-                {answers.map((a) => (
-                  <ViewPostCard
-                    key={a.id}
-                    questionId={a.id}
-                    title={a.title}
-                    tag={a.tag}
-                    content={a.content}
-                    username={a.author}
-                    createdAt={a.time}
-                    upvote={a.votes}
-                    views={a.views}
-                    replyCount={a.replies}
-                  />
-                ))}
+                {loading ? (
+                  <span className="text-slate-500">Loading answers...</span>
+                ) : userAnswers.length === 0 ? (
+                  <span className="text-slate-500">No answers found.</span>
+                ) : (
+                  userAnswers.map(({ answer, questionTitle, questionId }) => (
+                    <ViewPostCard
+                      key={answer.answerId}
+                      questionId={questionId}
+                      title={questionTitle}
+                      tag={[]}
+                      content={answer.content}
+                      username={user ? `${user.first_name} ${user.last_name}` : "User"}
+                      createdAt={answer.createdAt}
+                      upvote={answer.upVotes}
+                      views={0}
+                      replyCount={0}
+                    />
+                  ))
+                )}
               </div>
             </div>
           </Card>
@@ -136,37 +156,46 @@ export default function ProfilePage() {
         <aside className="w-full lg:w-[320px] flex-shrink-0">
           <div className="bg-white rounded-xl p-6 shadow flex flex-col items-center">
             <img
-              alt={user.name}
+              alt={user ? `${user.first_name} ${user.last_name}` : "User avatar"}
               className="h-28 w-28 rounded-full object-cover mb-4"
-              src={user.avatar}
+              src={staticUser.avatar}
             />
             <div className="w-full text-center">
               <div className="text-base font-semibold text-slate-800 mb-1">
-                {user.name}
+                {user ? `${user.first_name} ${user.last_name}` : "Loading..."}
               </div>
-              <div className="text-sm text-gray-500 mb-2">{user.about}</div>
-              <div className="font-semibold text-slate-900">{user.name}</div>
-              <div className="text-sm text-gray-500 mb-2">{user.term}</div>
-              <div className="text-sm text-gray-500 mb-1">{user.email}</div>
-              {/* <div className="font-medium text-slate-800">{user.role}</div> */}              
+              <div className="text-sm text-gray-500 mb-2">{staticUser.about}</div>
+              {/* <div className="font-semibold text-slate-900">{user ? `${user.first_name} ${user.last_name}` : "Loading..."}</div> */}
+              <div className="text-sm text-gray-500 mb-2">{staticUser.term}</div>
+              <div className="text-sm text-gray-500 mb-1">{user ? user.email : ""}</div>
+              {/* <div className="font-medium text-slate-800">{staticUser.role}</div> */}              
               <div className="flex justify-between text-sm text-slate-700 mb-2">
-                <span>Questions {user.questions}</span>
-                <span>Answers {user.answers}</span>
-                <span>Reputation {user.reputation}</span>
+                <span>Questions {staticUser.questions}</span>
+                <span>Answers {staticUser.answers}</span>
+                <span>Reputation {staticUser.reputation}</span>
               </div>
               <div className="text-sm text-gray-500 mb-2">
-                Student no: {user.studentNo}
+                Student no: {staticUser.studentNo}
               </div>
               <div className="text-sm text-gray-500 mb-2">
-                Age: {user.age}
+                Age: {staticUser.age}
                 <br />
-                Gender: {user.gender}
+                Gender: {staticUser.gender}
               </div>
               <div className="text-sm text-gray-500 mb-4">
-                Saved tags: {user.tags.join(", ")}
+                Saved tags: {staticUser.tags.join(", ")}
               </div>
-              <div className="mt-4">
+              <div className="mt-4 flex flex-col gap-2">
                 <PillButton>Edit Details</PillButton>
+                <PillButton
+                  onClick={() => {
+                    logout();
+                    router.push("/");
+                  }}
+                  style={{ backgroundColor: '#e53e3e' }}
+                >
+                  Logout
+                </PillButton>
               </div>
             </div>
           </div>
