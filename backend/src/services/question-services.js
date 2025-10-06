@@ -38,7 +38,7 @@ class QuestionService {
                 courseId: question.course_id,
                 viewCount: question.view_count,
                 score: question.score,
-                isAnonymous: question.is_anonymous,
+                isAnonymous: Boolean(question.is_anonymous),
                 createdAt: question.created_at,
                 updatedAt: question.updated_at,
                 upVotes: voteCounts.upVotes,
@@ -99,12 +99,12 @@ class QuestionService {
                     return {
                         answerId: answer.answer_id,
                         content: answer.body,
-                        isAccepted: answer.is_accepted,
+                        isAccepted: Boolean(answer.is_accepted),
                         score: answer.score,
                         createdAt: answer.created_at,
                         updatedAt: answer.updated_at,
                         userId: answer.user_id,
-                        isAnonymous: answer.is_anonymous,
+                        isAnonymous: Boolean(answer.is_anonymous),
                         upVotes: answerVoteCounts.upVotes,
                         downVotes: answerVoteCounts.downVotes
                     };
@@ -119,7 +119,7 @@ class QuestionService {
                 courseId: question.course_id,
                 viewCount: question.view_count + 1, // Include the +1 we just added
                 score: question.score,
-                isAnonymous: question.is_anonymous,
+                isAnonymous: Boolean(question.is_anonymous),
                 createdAt: question.created_at,
                 updatedAt: question.updated_at,
                 upVotes: questionVoteCounts.upVotes,
@@ -171,7 +171,7 @@ class QuestionService {
                         courseId: question.course_id,
                         viewCount: question.view_count,
                         score: question.score,
-                        isAnonymous: question.is_anonymous,
+                        isAnonymous: Boolean(question.is_anonymous),
                         createdAt: question.created_at,
                         updatedAt: question.updated_at,
                         answerCount: question.answer_count,

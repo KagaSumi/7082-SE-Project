@@ -6,32 +6,45 @@ import { useRouter } from "next/navigation";
 import Card from "../../components/Card/Card";
 import PillButton from "../../components/Card/PillButton";
 
-const users = [
-  { username: "alice", password: "123" },
-  { username: "alex", password: "letmein" },
-];
 export default function LoginPage() {
   const router = useRouter();
-  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
-  const { login } = useAuth();
+  const [loading, setLoading] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const found = users.find(
-      (u) => u.username === username && u.password === password
-    );
-    if (found) {
+    setError(null);
+    setLoading(true);
+
+    try {
+      const res = await fetch("http://localhost:3000/api/users/signin", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(data.message || "Login failed");
+      }
+
       setSuccess(true);
-      setError(null);
-      login();
+      setLoading(false);
+
+      // Store user in localStorage or context
+      localStorage.setItem("user", JSON.stringify(data));
+
+      // Redirect to home after a short delay
       setTimeout(() => {
         router.push("/");
-      }, 1000); // Optional: show success for a moment before redirect
-    } else {
-      setError("Invalid username or password.");
+      }, 1000);
+    } catch (err: any) {
+      setError(err.message);
+      setLoading(false);
       setSuccess(false);
     }
   };
@@ -52,6 +65,7 @@ export default function LoginPage() {
           Log in to your account
         </h1>
       </div>
+
       {/* Login Card */}
       <Card>
         <form
@@ -60,17 +74,18 @@ export default function LoginPage() {
         >
           <div>
             <label className="block text-sm font-medium text-slate-700 mb-1">
-              Username
+              Email
             </label>
             <input
-              type="text"
+              type="email"
               className="w-full rounded-lg border border-slate-300 px-3 py-2 text-base focus:ring-2 focus:ring-blue-500 outline-none"
-              placeholder="Enter your username"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
+              placeholder="Enter your email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
               required
             />
           </div>
+
           <div>
             <label className="block text-sm font-medium text-slate-700 mb-1">
               Password
@@ -84,6 +99,7 @@ export default function LoginPage() {
               required
             />
           </div>
+
           {error && (
             <div className="text-red-600 text-sm text-center">{error}</div>
           )}
@@ -92,20 +108,22 @@ export default function LoginPage() {
               Login successful!
             </div>
           )}
+
           <div>
-            <PillButton type="submit">Login</PillButton>
+            <PillButton type="submit" disabled={loading}>
+              {loading ? "Logging in..." : "Login"}
+            </PillButton>
           </div>
         </form>
       </Card>
+
       <div className="mt-4 text-center text-slate-700">
         Don't have an account?{" "}
-        <a
-          href="/signup"
-          className="text-blue-700 hover:underline font-medium"
-        >
+        <a href="/signup" className="text-blue-700 hover:underline font-medium">
           Sign up
         </a>
       </div>
     </div>
   );
 }
+
