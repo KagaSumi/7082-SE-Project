@@ -32,6 +32,7 @@ MYSQL_PASSWORD=your_praxis_password
    ```bash
    docker compose down
    ```
+   > If you wish to remove all the data please add `-v` to the command above.
 
 ---
 
@@ -41,4 +42,3 @@ MYSQL_PASSWORD=your_praxis_password
   To change the port, modify the `docker-compose.yml` file.
 - The container will be named **`Praxis-db`**.
 - The backend should use the **`Praxis`** user to interact with the database.
-
