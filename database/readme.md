@@ -1,18 +1,44 @@
 # MySQL Setup Guide
+
 ## Environment Configuration
 
-Create a .env file with the following variables:
+Create a `.env` file in the project root with the following variables:
+
+```dotenv
 MYSQL_ROOT_PASSWORD=your_secure_root_password
 MYSQL_DATABASE=qa_platform
 MYSQL_USER=Praxis
 MYSQL_PASSWORD=your_praxis_password
+```
 
-# Docker
-Please Build the sql image using `docker compose build`
-Then to host the databse on your own machine `docker compose up -d` (-d flag will just run it in as a background process)
+> Make sure to replace the placeholders with your actual passwords.
 
-To tear down the database use `docker compose down`
+---
 
-Note the sql database is currently running on 3306 the normal mysql database port, if you require to change it please edit the docker file.
+## Docker Setup
 
-The container will be called Praxis-db running on port 3306, the backend should be using the user `Praxis` to intract with the database 
+1. **Build the SQL image**  
+   ```bash
+   docker compose build
+   ```
+
+2. **Start the database**  
+   ```bash
+   docker compose up -d
+   ```
+   > The `-d` flag runs the container in the background.
+
+3. **Stop and remove the database container**  
+   ```bash
+   docker compose down
+   ```
+
+---
+
+## Notes
+
+- The MySQL database is running on **port 3306** by default.  
+  To change the port, modify the `docker-compose.yml` file.
+- The container will be named **`Praxis-db`**.
+- The backend should use the **`Praxis`** user to interact with the database.
+
