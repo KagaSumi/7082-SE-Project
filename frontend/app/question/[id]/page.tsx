@@ -96,12 +96,15 @@ export default async function QuestionIdPage({
                   const answerTotalVotes = answer.upVotes - answer.downVotes;
 
                   return (
-                    <QACard
-                      id={answer.questionId}
-                      type={QA.Answer}
-                      content={answer.content}
-                      totalVotes={answerTotalVotes}
-                    />
+                      <QACard
+                        key={answer.answerId}
+                        id={answer.questionId}
+                        type={QA.Answer}
+                        content={answer.content}
+                        totalVotes={answerTotalVotes}
+                        createdAt={answer.createdAt}
+                        username="username goes here"
+                      />
                   );
                 })}
               </div>

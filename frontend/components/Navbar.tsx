@@ -18,7 +18,7 @@ export default function Navbar() {
         </div>
 
         {/* Search bar */}
-        <div className="min-w-[70%] lg:min-w-[50%]">
+        <div className="min-w-[70%] md:min-w-[50%]">
           <input
             placeholder="Search..."
             className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm outline-none ring-blue-600 focus:ring-2"
