@@ -230,6 +230,65 @@ BEGIN
 END//
 DELIMITER ;
 
+-- Trigger to update score when an question is updated
+DELIMITER //
+CREATE TRIGGER after_vote_update_question
+AFTER UPDATE ON Votes
+FOR EACH ROW
+BEGIN
+    IF NEW.question_id IS NOT NULL THEN
+        -- Recalculate question score
+        UPDATE Question q
+        SET q.score = (
+            SELECT COALESCE(SUM(CASE WHEN vote_type = 'upvote' THEN 1 ELSE -1 END),0)
+            FROM Votes v
+            WHERE v.question_id = NEW.question_id
+        )
+        WHERE q.question_id = NEW.question_id;
+
+        -- Recalculate question author score
+        UPDATE User u
+        JOIN Question q ON u.user_id = q.user_id
+        SET u.score = (
+            SELECT COALESCE(SUM(CASE WHEN vote_type = 'upvote' THEN 1 ELSE -1 END),0)
+            FROM Votes v
+            WHERE v.question_id = NEW.question_id
+        )
+        WHERE q.question_id = NEW.question_id;
+    END IF;
+END//
+DELIMITER ;
+
+-- Trigger to update score when an answer is updated
+DELIMITER //
+CREATE TRIGGER after_vote_update_answer
+AFTER UPDATE ON Votes
+FOR EACH ROW
+BEGIN
+    -- Only fire if answer_id is not null
+    IF NEW.answer_id IS NOT NULL THEN
+        -- Recalculate answer score
+        UPDATE Answer a
+        SET a.score = (
+            SELECT COALESCE(SUM(CASE WHEN vote_type = 'upvote' THEN 1 ELSE -1 END),0)
+            FROM Votes v
+            WHERE v.answer_id = NEW.answer_id
+        )
+        WHERE a.answer_id = NEW.answer_id;
+
+        -- Recalculate answer author score
+        UPDATE User u
+        JOIN Answer a ON u.user_id = a.user_id
+        SET u.score = (
+            SELECT COALESCE(SUM(CASE WHEN vote_type = 'upvote' THEN 1 ELSE -1 END),0)
+            FROM Votes v
+            WHERE v.answer_id = NEW.answer_id
+        )
+        WHERE a.answer_id = NEW.answer_id;
+    END IF;
+END//
+DELIMITER ;
+
 -- Indexes for better performance
 CREATE INDEX idx_question_course ON Question(course_id);
 CREATE INDEX idx_question_user ON Question(user_id);

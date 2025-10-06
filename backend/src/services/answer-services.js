@@ -5,6 +5,7 @@ class AnswerService {
         try {
             console.log(`Creating answer...`);
 
+            // Real DB query - matches your ERD
             const [result] = await pool.execute(
                 `INSERT INTO Answer (body, question_id, user_id, is_anonymous) 
                  VALUES (?, ?, ?, ?)`,
@@ -164,69 +165,40 @@ async rateAnswer(data) {
                 [data.userId, data.answerId]
             );
 
-            // Use string values that match your DB ENUM
-            const voteType = data.type === 1 ? 'upvote' : 'downvote';
-            let scoreChange = 0;
+            const newVoteType = data.type === 1 ? 'upvote' : 'downvote';
+            let previousVote = existingVotes.length > 0 ? existingVotes[0].vote_type : null;
 
-            if (existingVotes.length > 0) {
-                const existingVote = existingVotes[0];
-                
-                // If clicking same vote type again, remove the vote (toggle)
-                if (existingVote.vote_type === voteType) {
-                    await connection.execute(
-                        'DELETE FROM Votes WHERE vote_id = ?',
-                        [existingVote.vote_id]
-                    );
-                    // Remove the previous vote's impact
-                    scoreChange = voteType === 'upvote' ? -1 : 1;
-                } else {
-                    // If changing vote type, update existing vote
-                    await connection.execute(
-                        'UPDATE Votes SET vote_type = ? WHERE vote_id = ?',
-                        [voteType, existingVote.vote_id]
-                    );
-                    // Changing vote type: net effect of 2 points
-                    // downvote → upvote: was -1, now +1 = +2 change
-                    // upvote → downvote: was +1, now -1 = -2 change
-                    scoreChange = (voteType === 'upvote') ? 2 : -2;
-                }
-            } else {
-                // Create new vote
+            // Insert, delete, or update vote
+            if (!previousVote) {
+                // No existing vote → add new
                 await connection.execute(
-                    `INSERT INTO Votes (vote_type, user_id, answer_id) 
+                    `INSERT INTO Votes (vote_type, user_id, answer_id)
                      VALUES (?, ?, ?)`,
-                    [voteType, data.userId, data.answerId]
+                    [newVoteType, data.userId, data.answerId]
                 );
-                // Add new vote's impact
-                scoreChange = voteType === 'upvote' ? 1 : -1;
-            }
-
-            // Update the answer score manually
-            if (scoreChange !== 0) {
+            } else if (previousVote === newVoteType) {
+                // Same vote → toggle off (remove)
                 await connection.execute(
-                    'UPDATE Answer SET score = score + ? WHERE answer_id = ?',
-                    [scoreChange, data.answerId]
+                    'DELETE FROM Votes WHERE vote_id = ?',
+                    [existingVotes[0].vote_id]
                 );
-
-                // Also update the user's score who posted the answer
+            } else {
+                // Switch vote type
                 await connection.execute(
-                    `UPDATE User u 
-                     JOIN Answer a ON u.user_id = a.user_id 
-                     SET u.score = u.score + ? 
-                     WHERE a.answer_id = ?`,
-                    [scoreChange, data.answerId]
+                    'UPDATE Votes SET vote_type = ? WHERE vote_id = ?',
+                    [newVoteType, existingVotes[0].vote_id]
                 );
             }
 
-            // Get the updated answer with current score
+            // Commit transaction
+            await connection.commit();
+
+            // Get the updated answer score and vote counts
             const [answer] = await connection.execute(
                 'SELECT score FROM Answer WHERE answer_id = ?',
                 [data.answerId]
             );
 
-            await connection.commit();
-
-            // Get updated vote counts
             const voteCounts = await this.getVoteCounts(data.answerId);
 
             return {
@@ -242,19 +214,21 @@ async rateAnswer(data) {
         } finally {
             connection.release();
         }
+
     } catch (error) {
         console.error('Error rating answer:', error);
         throw error;
     }
 }
-    // Helper method to get vote counts
+
+   // Helper
     async getVoteCounts(answerId) {
         const [votes] = await pool.execute(
             `SELECT 
-                COUNT(CASE WHEN vote_type = 'upvote' THEN 1 END) as up_votes,
-                COUNT(CASE WHEN vote_type = 'downvote' THEN 1 END) as down_votes
-             FROM Votes 
-             WHERE answer_id = ? AND question_id IS NULL`,
+            COUNT(CASE WHEN vote_type = 'upvote' THEN 1 END) as up_votes,
+            COUNT(CASE WHEN vote_type = 'downvote' THEN 1 END) as down_votes
+         FROM Votes 
+         WHERE answer_id = ? AND question_id IS NULL`,
             [answerId]
         );
 

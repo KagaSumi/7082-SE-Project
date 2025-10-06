@@ -248,103 +248,74 @@ class QuestionService {
     }
 
     async rateQuestion(data) {
+    try {
+        console.log(`Rating a question...`);
+
+        const connection = await pool.getConnection();
+        await connection.beginTransaction();
+
         try {
-            console.log(`Rating a question...`);
+            // Check if user already voted on this question
+            const [existingVotes] = await connection.execute(
+                `SELECT vote_id, vote_type FROM Votes 
+                 WHERE user_id = ? AND question_id = ? AND answer_id IS NULL`,
+                [data.userId, data.questionId]
+            );
 
-            const connection = await pool.getConnection();
-            await connection.beginTransaction();
+            const voteType = data.type === 1 ? 'upvote' : 'downvote';
 
-            try {
-                // Check if user already voted on this question
-                const [existingVotes] = await connection.execute(
-                    `SELECT vote_id, vote_type FROM Votes 
-                     WHERE user_id = ? AND question_id = ? AND answer_id IS NULL`,
-                    [data.userId, data.questionId]
+            if (existingVotes.length === 0) {
+                // No existing vote → add new
+                await connection.execute(
+                    `INSERT INTO Votes (vote_type, user_id, question_id) 
+                     VALUES (?, ?, ?)`,
+                    [voteType, data.userId, data.questionId]
                 );
-
-                // Use string values that match your ENUM
-                const voteType = data.type === 1 ? 'upvote' : 'downvote';
-                let scoreChange = 0;
-
-                if (existingVotes.length > 0) {
-                    const existingVote = existingVotes[0];
-                    
-                    // If clicking same vote type again, remove the vote (toggle)
-                    if (existingVote.vote_type === voteType) {
-                        await connection.execute(
-                            'DELETE FROM Votes WHERE vote_id = ?',
-                            [existingVote.vote_id]
-                        );
-                        // Remove the previous vote's impact
-                        scoreChange = voteType === 'upvote' ? -1 : 1;
-                    } else {
-                        // If changing vote type, update existing vote
-                        await connection.execute(
-                            'UPDATE Votes SET vote_type = ? WHERE vote_id = ?',
-                            [voteType, existingVote.vote_id]
-                        );
-                        // Changing vote type: net effect of 2 points
-                        scoreChange = (voteType === 'upvote') ? 2 : -2;
-                    }
-                } else {
-                    // Create new vote
-                    await connection.execute(
-                        `INSERT INTO Votes (vote_type, user_id, question_id) 
-                         VALUES (?, ?, ?)`,
-                        [voteType, data.userId, data.questionId]
-                    );
-                    // Add new vote's impact
-                    scoreChange = voteType === 'upvote' ? 1 : -1;
-                }
-
-                // Update the question score manually
-                if (scoreChange !== 0) {
-                    await connection.execute(
-                        'UPDATE Question SET score = score + ? WHERE question_id = ?',
-                        [scoreChange, data.questionId]
-                    );
-
-                    // Also update the user's score who posted the question
-                    await connection.execute(
-                        `UPDATE User u 
-                         JOIN Question q ON u.user_id = q.user_id 
-                         SET u.score = u.score + ? 
-                         WHERE q.question_id = ?`,
-                        [scoreChange, data.questionId]
-                    );
-                }
-
-                // Get the updated question with current score
-                const [question] = await connection.execute(
-                    'SELECT score FROM Question WHERE question_id = ?',
-                    [data.questionId]
+            } else if (existingVotes[0].vote_type === voteType) {
+                // Same vote → toggle off (remove)
+                await connection.execute(
+                    'DELETE FROM Votes WHERE vote_id = ?',
+                    [existingVotes[0].vote_id]
                 );
-
-                await connection.commit();
-
-                // Get updated vote counts
-                const voteCounts = await this.getVoteCounts(data.questionId);
-
-                return {
-                    question_id: data.questionId,
-                    up_votes: voteCounts.upVotes,
-                    down_votes: voteCounts.downVotes,
-                    score: question[0].score
-                };
-
-            } catch (error) {
-                await connection.rollback();
-                throw error;
-            } finally {
-                connection.release();
+            } else {
+                // Switch vote type
+                await connection.execute(
+                    'UPDATE Votes SET vote_type = ? WHERE vote_id = ?',
+                    [voteType, existingVotes[0].vote_id]
+                );
             }
-        } catch (error) {
-            console.error('Error rating question:', error);
-            throw error;
-        }
-    }
 
-    // Helper method to get vote counts for both questions and answers
+            await connection.commit();
+
+            // Get the updated question score and vote counts
+            const [question] = await connection.execute(
+                'SELECT score FROM Question WHERE question_id = ?',
+                [data.questionId]
+            );
+
+            const voteCounts = await this.getVoteCounts(data.questionId, 'question');
+
+            return {
+                question_id: data.questionId,
+                up_votes: voteCounts.upVotes,
+                down_votes: voteCounts.downVotes,
+                score: question[0].score
+            };
+
+        } catch (error) {
+            await connection.rollback();
+            throw error;
+        } finally {
+            connection.release();
+        }
+
+    } catch (error) {
+        console.error('Error rating question:', error);
+        throw error;
+    }
+}
+
+      // Helper method to get vote counts for both questions and answers
     async getVoteCounts(entityId) {
         const [votes] = await pool.execute(
             `SELECT 
