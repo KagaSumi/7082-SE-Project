@@ -57,12 +57,12 @@ export default function SignupPage() {
     }
 
     // Prepare payload for backend
-    const { first_name, last_name } = splitName(fullName);
+    const { firstName, lastName } = splitName(fullName);
     const payload = {
-      firstName: first_name,
-      lastName: last_name,
+      firstName,
+      lastName,
       email,
-      studentId: studentNo, // matches backend column name
+      studentId, // matches backend column name
       password,
     };
 

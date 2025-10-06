@@ -5,7 +5,7 @@ const dbConfig = {
   host: process.env.DB_HOST || 'localhost',
   port: process.env.DB_PORT || 3306,
   user: process.env.MYSQL_USER || 'Praxis',
-  password: process.env.MYSQL_PASSWORD || 'your_praxis_password',
+  password: process.env.MYSQL_PASSWORD || '123',
   database: process.env.MYSQL_DATABASE || 'qa_platform',
   waitForConnections: true,
   connectionLimit: 10,
