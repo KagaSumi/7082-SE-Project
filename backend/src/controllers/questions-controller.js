@@ -59,7 +59,7 @@ class QuestionController {
         const {questionId} = req.params;
 
         questionService
-        .deletQuestion({"questionId": questionId})
+        .deleteQuestion({"questionId": questionId})
         .then((response) => {
             res.json(response);
         })
