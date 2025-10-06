@@ -1,0 +1,13 @@
+services:
+  mysql:
+    build: .
+    container_name: Praxis-db
+    ports:
+      - "3306:3306"
+    env_file:
+      - .env
+    volumes:
+      - Praxis-data:/var/lib/mysql
+
+volumes:
+  Praxis-data:
