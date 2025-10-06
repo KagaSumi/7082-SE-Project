@@ -55,6 +55,15 @@ class AnswerService {
             throw new Error("Answer ID doesn't exist!");
         }
 
+        let voteCount = await this.getVotes({
+            answerId: result.answerId,
+            upVotes: 0,
+            downVotes: 0,
+        });
+
+        result["upVotes"] = voteCount.upVotes;
+        result["downVotes"] = voteCount.downVotes;
+
         return result;
     }
 
@@ -166,7 +175,7 @@ class AnswerService {
             downVotes: 0
         }
 
-        res = this.getVotes(res);
+        res = await this.getVotes(res);
 
         return res;
     }

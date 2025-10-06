@@ -53,11 +53,36 @@ class QuestionService {
             }
         }
 
+        if (result.questionId === undefined) {
+            throw new Error("Question ID doesn't exist!");
+        }
+
+        // Retrieve all answers
         for (const answer of dummyDB.answers) {
             if (answer.questionId == data.questionId) {
-                result["answers"].push(answer);
+                // Retrieve vote count for answer
+                let resAnswer = {...answer};
+                let voteCount = await this.getVotes({
+                    answerId: answer.answerId,
+                    upVotes: 0,
+                    downVotes: 0
+                });
+
+                resAnswer["upVotes"] = voteCount.upVotes;
+                resAnswer["downVotes"] = voteCount.downVotes;
+                result["answers"].push(resAnswer);
             }
         }
+
+        // Retrieve vote count for question
+        let voteCount = await this.getVotes({
+            questionId: result.questionId,
+            upVotes: 0,
+            downVotes: 0
+        });
+
+        result["upVotes"] = voteCount.upVotes;
+        result["downVotes"] = voteCount.downVotes;
 
         return result;
     }
@@ -73,7 +98,21 @@ class QuestionService {
             throw new Error(err.message);
         }
 
-        return dummyDB.questions;
+        let questions = [...dummyDB.questions];
+
+        // Retrieve vote count for each question
+        for (const question of questions) {
+            let voteCount = await this.getVotes({
+                questionId: question.questionId,
+                upVotes: 0,
+                downVotes: 0
+            });
+
+            question["upVotes"] = voteCount.upVotes;
+            question["downVotes"] = voteCount.downVotes;
+        }
+
+        return questions;
     }
 
     async updateQuestion(data) {
@@ -175,7 +214,7 @@ class QuestionService {
             downVotes: 0
         }
 
-        res = this.getVotes(res);
+        res = await this.getVotes(res);
 
         return res;
     }
@@ -185,7 +224,7 @@ class QuestionService {
             console.log(`Getting all votes of a question...`);
 
             // DB query goes here //
-            await genericHelper.sleep(2000);
+            await genericHelper.sleep(500);
             ////////////////////////
         } catch (err) {
             throw new Error(err.message);
