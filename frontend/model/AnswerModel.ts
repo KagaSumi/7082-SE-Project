@@ -2,7 +2,6 @@ import { z } from "zod";
 
 const AnswerModel = z.object({
   answerId: z.number(),
-  questionId: z.number(),
   content: z.string(),
   upVotes: z.number(),
   downVotes: z.number(),

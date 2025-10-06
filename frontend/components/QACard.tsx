@@ -11,14 +11,14 @@ enum QA {
 }
 
 export default function QACard({
-  id,
+  questionId,
   type,
   totalVotes,
   content,
   createdAt,
   username,
 }: {
-  id: number;
+  questionId: number;
   type: QA;
   totalVotes: number;
   content: string;
@@ -90,7 +90,7 @@ export default function QACard({
       </div>
 
       {/** If queston */}
-      {type === QA.Question ? <AnswerForm questionId={id} /> : null}
+      {type === QA.Question ? <AnswerForm questionId={questionId} /> : null}
     </div>
   );
 }

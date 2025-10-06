@@ -13,7 +13,8 @@ const QuestionModel = z.object({
   isAnonymous: z.boolean(),
   createdAt: z.string(),
   updatedAt: z.string(),
-  answers: z.array(AnswerModel)
+  answerCount: z.number(),
+  answers: z.array(AnswerModel).optional()
 });
 
 type Question = z.infer<typeof QuestionModel>;

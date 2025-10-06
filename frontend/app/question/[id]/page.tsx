@@ -81,7 +81,7 @@ export default async function QuestionIdPage({
           <Card>
             <div className="py-5 px-1 flex flex-col gap-10">
               <QACard
-                id={question.questionId}
+                questionId={question.questionId}
                 type={QA.Question}
                 content={question.content}
                 totalVotes={totalVotes}
@@ -98,7 +98,7 @@ export default async function QuestionIdPage({
                   return (
                       <QACard
                         key={answer.answerId}
-                        id={answer.questionId}
+                        questionId={question.questionId}
                         type={QA.Answer}
                         content={answer.content}
                         totalVotes={answerTotalVotes}

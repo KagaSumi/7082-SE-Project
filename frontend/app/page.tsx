@@ -2,6 +2,9 @@
 import React from "react";
 import Link from "next/link";
 
+// Model
+import { Question, QuestionModel } from "../model/QuestionModel";
+
 // Components
 import ViewPostCard from "../components/ViewPostCard";
 import Card from "../components/Card/Card";
@@ -10,70 +13,21 @@ import PillButton from "../components/Card/PillButton";
 import Stat from "../components/Card/Stat";
 import Sidebar from "../components/Sidebar";
 
-const posts = [
-  {
-    id: 1,
-    title: "How do I solve this integral?",
-    tag: ["Calculus", "MATH 1050"],
-    author: "User123",
-    time: "2h ago",
-    content:
-      "I'm having trouble evaluating ∫u dv using integration by parts. What am I doing wrong?",
-    votes: 10,
-    replies: 2,
-    views: 13,
-  },
-  {
-    id: 2,
-    title: "Best way to learn Python for beginners?",
-    tag: ["Programming"],
-    author: "AliceB",
-    time: "7h ago",
-    content:
-      "I'm new to programming and looking for a good starting point to learn Python. Any suggestions?",
-    votes: 21,
-    replies: 3,
-    views: 5,
-  },
-  {
-    id: 3,
-    title: "Best way to learn Python for beginners?",
-    tag: ["Programming"],
-    author: "AliceB",
-    time: "7h ago",
-    content:
-      "I'm new to programming and looking for a good starting point to learn Python. Any suggestions?",
-    votes: 21,
-    replies: 3,
-    views: 5,
-  },
-  {
-    id: 4,
-    title: "Best way to learn Python for beginners?",
-    tag: ["Programming"],
-    author: "AliceB",
-    time: "7h ago",
-    content:
-      "I'm new to programming and looking for a good starting point to learn Python. Any suggestions?",
-    votes: 21,
-    replies: 3,
-    views: 5,
-  },
-  {
-    id: 5,
-    title: "Best way to learn Python for beginners?",
-    tag: ["Programming"],
-    author: "AliceB",
-    time: "7h ago",
-    content:
-      "I'm new to programming and looking for a good starting point to learn Python. Any suggestions?",
-    votes: 21,
-    replies: 3,
-    views: 5,
-  },
-];
+export default async function PraxisPage() {
+  const res = await fetch("http://localhost:3000/api/questions");
 
-export default function PraxisPage() {
+  if (!res.ok) throw new Error("Failed to fetch Question");
+  const questionsJson: Array<Question> = await res.json();
+
+  questionsJson.forEach((question) => {
+    console.log(question);
+    const parseResult = QuestionModel.safeParse(question);
+    if (!parseResult.success) {
+      console.error(parseResult.error);
+      throw new Error("Invalid thread data received from API");
+    }
+  });
+
   return (
     <div className="min-h-screen bg-slate-50">
       {/* Top Nav */}
@@ -155,18 +109,18 @@ export default function PraxisPage() {
                 Newest Questions
               </h2>
               <div className="p-1 flex flex-col gap-5">
-                {posts.map((p) => (
+                {questionsJson.map((q) => (
                   <ViewPostCard
-                    key={p.id}
-                    questionId={p.id}
-                    title={p.title}
-                    tag={p.tag}
-                    content={p.content}
-                    username={p.author}
-                    createdAt={p.time}
-                    upvote={p.votes}
-                    views={p.views}
-                    replyCount={p.replies}
+                    key={q.questionId}
+                    questionId={q.questionId}
+                    title={q.title}
+                    tag={["tag1", "tag2"]}
+                    content={q.content}
+                    username={"username will go here"}
+                    createdAt={q.createdAt}
+                    upvote={q.upVotes - q.downVotes}
+                    views={q.viewCount}
+                    replyCount={q.answerCount}
                   />
                 ))}
               </div>
