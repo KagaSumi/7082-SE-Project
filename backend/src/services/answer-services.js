@@ -185,9 +185,16 @@ async rateAnswer(data) {
             } else {
                 // Switch vote type
                 await connection.execute(
-                    'UPDATE Votes SET vote_type = ? WHERE vote_id = ?',
-                    [newVoteType, existingVotes[0].vote_id]
+                    'DELETE FROM Votes WHERE vote_id = ?',
+                    [existingVotes[0].vote_id]
                 );
+
+                await connection.execute(
+                    `INSERT INTO Votes (vote_type, user_id, answer_id)
+                     VALUES (?, ?, ?)`,
+                    [newVoteType, data.userId, data.answerId]
+                );
+
             }
 
             // Commit transaction

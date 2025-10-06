@@ -280,8 +280,14 @@ class QuestionService {
             } else {
                 // Switch vote type
                 await connection.execute(
-                    'UPDATE Votes SET vote_type = ? WHERE vote_id = ?',
-                    [voteType, existingVotes[0].vote_id]
+                    'DELETE FROM Votes WHERE vote_id = ?',
+                    [existingVotes[0].vote_id]
+                );
+
+                await connection.execute(
+                    `INSERT INTO Votes (vote_type, user_id, question_id) 
+                     VALUES (?, ?, ?)`,
+                    [voteType, data.userId, data.questionId]
                 );
             }
 
