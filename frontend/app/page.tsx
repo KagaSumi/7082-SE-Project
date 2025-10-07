@@ -117,7 +117,7 @@ export default async function PraxisPage() {
                     title={q.title}
                     tag={["tag1", "tag2"]}
                     content={q.content}
-                    username={"username will go here"}
+                    username={`${q.firstname} ${q.lastname}`}
                     createdAt={q.createdAt}
                     upvote={q.upVotes - q.downVotes}
                     views={q.viewCount}

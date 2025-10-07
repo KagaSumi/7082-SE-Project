@@ -37,7 +37,7 @@ export default function CreateQuestionPage() {
                 body: JSON.stringify({
                     title,
                     content: body,
-                    userId: 1,
+                    userId: JSON.parse(localStorage.getItem("user")).userId,
                     courseId: numericCourseId,
                     isAnonymous: anonymous,
                 }),

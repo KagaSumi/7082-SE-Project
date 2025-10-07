@@ -86,7 +86,7 @@ export default function SignupPage() {
 
       // Redirect to login after success
       setTimeout(() => {
-        router.push("/");
+        router.push("/login");
       }, 1200);
     } catch (err: any) {
       console.error("Signup error:", err);

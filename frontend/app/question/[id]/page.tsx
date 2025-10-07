@@ -78,7 +78,7 @@ export default async function QuestionIdPage({
                 href={`/profile/${question.userId}`}
                 className="text-sm text-slate-600 underline "
               >
-                username goes here
+              {question.firstname} {question.lastname}
               </a>
             </div>
           </Card>
@@ -108,7 +108,7 @@ export default async function QuestionIdPage({
                         content={answer.content}
                         totalVotes={answerTotalVotes}
                         createdAt={answer.createdAt}
-                        username="username goes here"
+                        username={`${answer.firstname} ${answer.lastname}`}
                       />
                   );
                 })}

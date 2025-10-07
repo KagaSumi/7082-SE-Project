@@ -7,6 +7,8 @@ const AnswerModel = z.object({
   downVotes: z.number(),
   createdAt: z.string(),
   updatedAt: z.string(),
+  firstname: z.string(),
+  lastname: z.string(),
   isAnonymous: z.boolean(),
   userId: z.number(),
 });
