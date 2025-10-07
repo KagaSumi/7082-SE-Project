@@ -71,7 +71,7 @@ export default function QACard({
               </div>
               <div>
                 <p>answered at {createdAt}</p>
-                <p className="cursor-pointer text-blue-500">username goes here</p>
+                <p className="cursor-pointer text-blue-500">{username}</p>
               </div>
             </div>
           ) : null}

@@ -10,6 +10,8 @@ const QuestionModel = z.object({
   viewCount: z.number(),
   upVotes: z.number(),
   downVotes: z.number(),
+  firstname: z.string(),
+  lastname: z.string(),
   isAnonymous: z.boolean(),
   createdAt: z.string(),
   updatedAt: z.string(),
@@ -26,6 +28,8 @@ const QuestionWithAnswerModel = z.object({
   upVotes: z.number(),
   downVotes: z.number(),
   isAnonymous: z.boolean(),
+  firstname: z.string(),
+  lastname: z.string(),
   createdAt: z.string(),
   updatedAt: z.string(),
   answers: z.array(AnswerModel)
