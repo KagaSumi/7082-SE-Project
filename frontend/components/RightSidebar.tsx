@@ -8,7 +8,7 @@ export default function RightSidebar({ isLoggedIn }: { isLoggedIn: boolean }) {
   const [user, setUser] = useState<{ first_name: string; last_name: string; email: string } | null>(null);
   useEffect(() => {
     if (!isLoggedIn) return;
-    fetch("http://localhost:3000/api/users/1")
+    fetch(`http://localhost:3000/api/users/${JSON.parse(localStorage.getItem("user")).userId}`)
       .then((res) => res.json())
       .then((data) => setUser(data))
       .catch(() => setUser(null));
