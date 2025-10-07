@@ -1,10 +1,10 @@
 "use client";
 
-import React from "react";
-import { useState } from "react";
-
+import React, { useState } from "react";
 import PillButton from "./Card/PillButton";
+import { useRouter } from "next/navigation";
 
+// --- custom hook to handle form state ---
 function useAnswerForm() {
   const [content, setContent] = useState("");
   const [isAnon, setIsAnon] = useState(false);
@@ -13,41 +13,74 @@ function useAnswerForm() {
   return { content, setContent, submitting, setSubmitting, isAnon, setIsAnon };
 }
 
+// --- reusable function to call backend ---
+async function submitAnswer({
+  content,
+  questionId,
+  isAnonymous,
+  userId,
+}: {
+  content: string;
+  questionId: number;
+  isAnonymous: boolean;
+  userId: number;
+}) {
+  const body = JSON.stringify({
+    body: content,           // ✅ matches backend key
+    question_id: questionId, // ✅ snake_case key
+    user_id: userId,         // ✅ snake_case key
+    is_anonymous: isAnonymous, // ✅ snake_case key
+  });
+
+  const res = await fetch("http://localhost:3000/api/answers", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body,
+  });
+
+  if (!res.ok) {
+    const errText = await res.text();
+    throw new Error(`Failed to submit answer: ${errText}`);
+  }
+
+  return res.json();
+}
+
+// --- main component ---
 export default function AnswerForm({ questionId }: { questionId: number }) {
   const { content, setContent, submitting, setSubmitting, isAnon, setIsAnon } =
     useAnswerForm();
 
+  const router = useRouter();
   function handleCheckboxChange(e: React.ChangeEvent<HTMLInputElement>) {
     setIsAnon(e.target.checked);
   }
 
   async function onSubmit(e: React.FormEvent) {
-    console.log("this works here");
-    // e.preventDefault(); 
-    // add so the page does not refresh later
-    
+    e.preventDefault(); // ✅ prevents page refresh
     const trimmed = content.trim();
     if (!trimmed) return;
     setContent(trimmed);
 
     setSubmitting(true);
     try {
-      const body = JSON.stringify({
-        content: content,
-        questionId: questionId,
+      // ✅ dynamically get user from localStorage (if available)
+      const user = JSON.parse(localStorage.getItem("user") || "{}");
+      const userId = user?.userId ?? 1; // fallback to 1 for testing
+
+      // ✅ call backend
+      const response = await submitAnswer({
+        content: trimmed,
+        questionId,
         isAnonymous: isAnon,
-        userId: 1, // to be changed when db and auth is set up
+        userId,
       });
 
-      const res = await fetch("http://localhost:3000/api/answers", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: body,
-      });
-      if (!res.ok) throw new Error("Failed");
+      console.log("✅ Answer submitted:", response);
       setContent("");
+      router.push(`/question/${questionId}`);
     } catch (err) {
-      console.error(err);
+      console.error("❌ Error submitting answer:", err);
     } finally {
       setSubmitting(false);
     }
@@ -60,7 +93,7 @@ export default function AnswerForm({ questionId }: { questionId: number }) {
       </summary>
       <form
         onSubmit={onSubmit}
-        className="opacity-0 group-open:opacity-100 transition-opacity duration-500 ease-in-out "
+        className="opacity-0 group-open:opacity-100 transition-opacity duration-500 ease-in-out"
       >
         <textarea
           className="w-full rounded-lg border border-slate-300 px-3 py-2 text-base min-h-[120px] focus:ring-2 focus:ring-blue-500 outline-none"
@@ -84,7 +117,7 @@ export default function AnswerForm({ questionId }: { questionId: number }) {
           </div>
           <div>
             <PillButton type="submit" disabled={submitting}>
-              Answer
+              {submitting ? "Submitting..." : "Answer"}
             </PillButton>
           </div>
         </div>
@@ -92,3 +125,4 @@ export default function AnswerForm({ questionId }: { questionId: number }) {
     </details>
   );
 }
+

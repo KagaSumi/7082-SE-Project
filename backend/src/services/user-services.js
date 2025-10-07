@@ -69,6 +69,27 @@ class UserService {
             throw new Error(err.message);
         }
     }
+    async getUserById(userId) {
+        try {
+            console.log(`Fetching user with ID: ${userId}...`);
+
+            const [users] = await pool.execute(
+                `SELECT user_id, first_name, last_name, email, student_id 
+                 FROM User WHERE user_id = ?`,
+                [userId]
+            );
+
+            if (users.length === 0) {
+                throw new Error("User not found");
+            }
+
+            return users[0];
+
+        } catch (err) {
+            console.error('Get user error:', err);
+            throw new Error(err.message);
+        }
+    }
 }
 
 module.exports = new UserService();
