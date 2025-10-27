@@ -107,7 +107,7 @@ export default function ProfilePage() {
                       key={p.questionId}
                       questionId={p.questionId}
                       title={p.title}
-                      tag={[]}
+                      tag={(p as any).tags || (p as any).tag || []}
                       content={p.content}
                       username={user ? `${user.first_name} ${user.last_name}` : "User"}
                       createdAt={p.createdAt}

@@ -59,11 +59,15 @@ class QuestionService {
             const [questions] = await pool.execute(
                 `SELECT q.question_id, q.title, q.body, q.view_count, q.score, q.created_at, q.updated_at, q.is_anonymous,
                         u.user_id, u.first_name, u.last_name, u.email,
-                        c.course_id, c.name
+                        c.course_id, c.name,
+                        GROUP_CONCAT(DISTINCT t.name) AS tags
                  FROM Question q
                  JOIN User u ON q.user_id = u.user_id
                  JOIN Course c ON q.course_id = c.course_id
-                 WHERE q.question_id = ?`,
+                 LEFT JOIN QuestionTag qt ON q.question_id = qt.question_id
+                 LEFT JOIN Tag t ON qt.tag_id = t.tag_id
+                 WHERE q.question_id = ?
+                 GROUP BY q.question_id`,
                 [data.questionId]
             );
 
@@ -126,6 +130,7 @@ class QuestionService {
                 firstname: question.first_name,
                 lastname: question.last_name,
                 updatedAt: question.updated_at,
+                tags: question.tags ? question.tags.split(',').map(t => t.trim()).filter(Boolean) : [],
                 upVotes: questionVoteCounts.upVotes,
                 downVotes: questionVoteCounts.downVotes,
                 answers: answersWithVotes
@@ -145,11 +150,14 @@ class QuestionService {
                 SELECT q.question_id, q.title, q.body, q.view_count, q.score, q.created_at, q.updated_at, q.is_anonymous,
                        u.user_id, u.first_name, u.last_name,
                        c.course_id, c.name,
-                       COUNT(a.answer_id) as answer_count
+                       COUNT(a.answer_id) as answer_count,
+                       GROUP_CONCAT(DISTINCT t.name) AS tags
                 FROM Question q
                 JOIN User u ON q.user_id = u.user_id
                 JOIN Course c ON q.course_id = c.course_id
                 LEFT JOIN Answer a ON q.question_id = a.question_id
+                LEFT JOIN QuestionTag qt ON q.question_id = qt.question_id
+                LEFT JOIN Tag t ON qt.tag_id = t.tag_id
             `;
 
             const params = [];
@@ -181,6 +189,7 @@ class QuestionService {
                         createdAt: question.created_at,
                         updatedAt: question.updated_at,
                         answerCount: question.answer_count,
+                        tags: question.tags ? question.tags.split(',').map(t => t.trim()).filter(Boolean) : [],
                         upVotes: voteCounts.upVotes,
                         downVotes: voteCounts.downVotes
                     };
