@@ -90,6 +90,16 @@ class UserService {
             throw new Error(err.message);
         }
     }
+    async update(userId,body) {
+        try {
+            console.log(`Updating User with ID: ${userId} ...`);
+            //insert update statement here
+            return getUserById(userId);
+        } catch (err) {
+            console.error('Update User Error:', err)
+            throw new Error(err.message);
+        }
+    }
 }
 
 module.exports = new UserService();

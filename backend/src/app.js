@@ -4,6 +4,7 @@ const { testConnection } = require('./services/database');
 const userRouter = require('./routes/user-router');
 const questionRouter = require('./routes/question-router');
 const answerRouter = require('./routes/answer-router');
+const tagRouter = require('./routes/tag-router');
 const cors = require("cors");
 
 
@@ -20,6 +21,7 @@ app.use(express.urlencoded({extended: true}));
 app.use('/api/users', userRouter);
 app.use('/api/questions', questionRouter);
 app.use('/api/answers', answerRouter);
+app.use('/api/tags', tagRouter);
 
 // Error handling middleware
 app.use((err, req, res, next) => {
@@ -30,5 +32,6 @@ app.use((err, req, res, next) => {
 app.use('/api/users', userRouter);
 app.use('/api/questions', questionRouter);
 app.use('/api/answers', answerRouter);
+app.use('/api/tag', tagRouter);
 
 module.exports = app;
