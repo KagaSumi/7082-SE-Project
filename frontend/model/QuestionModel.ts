@@ -16,6 +16,7 @@ const QuestionModel = z.object({
   createdAt: z.string(),
   updatedAt: z.string(),
   answerCount: z.number(),
+  tags: z.array(z.string()).optional(),
 });
 
 const QuestionWithAnswerModel = z.object({
@@ -32,7 +33,8 @@ const QuestionWithAnswerModel = z.object({
   lastname: z.string(),
   createdAt: z.string(),
   updatedAt: z.string(),
-  answers: z.array(AnswerModel)
+  answers: z.array(AnswerModel),
+  tags: z.array(z.string()).optional()
 });
 
 

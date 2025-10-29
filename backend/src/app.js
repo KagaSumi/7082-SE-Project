@@ -5,6 +5,7 @@ const userRouter = require('./routes/user-router');
 const questionRouter = require('./routes/question-router');
 const answerRouter = require('./routes/answer-router');
 const tagRouter = require('./routes/tag-router');
+const commentRouter = require('./routes/comment-router');
 const cors = require("cors");
 
 
@@ -22,6 +23,7 @@ app.use('/api/users', userRouter);
 app.use('/api/questions', questionRouter);
 app.use('/api/answers', answerRouter);
 app.use('/api/tags', tagRouter);
+app.use('/api/comments', commentRouter);
 
 // Error handling middleware
 app.use((err, req, res, next) => {
@@ -33,5 +35,6 @@ app.use('/api/users', userRouter);
 app.use('/api/questions', questionRouter);
 app.use('/api/answers', answerRouter);
 app.use('/api/tag', tagRouter);
+app.use('/api/comments', commentRouter);
 
 module.exports = app;

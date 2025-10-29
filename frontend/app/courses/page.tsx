@@ -89,7 +89,7 @@ export default function CoursesPage() {
                     key={p.questionId}
                     questionId={p.questionId}
                     title={p.title}
-                    tag={p.tag || []}
+                    tag={(p as any).tags || (p as any).tag || []}
                     content={p.content}
                     username={p.userId}
                     createdAt={p.createdAt}

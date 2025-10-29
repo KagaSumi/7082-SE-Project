@@ -7,5 +7,6 @@ router.get('/:answerId', answerController.getOneAnswer);
 router.put('/:answerId', answerController.updateAnswer);
 router.delete('/:answerId', answerController.deleteAnswer);
 router.post('/:answerId/rate', answerController.rateAnswer);
+router.post('/generate-answer', answerController.generateAnswer);
 
 module.exports = router;

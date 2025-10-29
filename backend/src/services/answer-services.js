@@ -1,9 +1,13 @@
 const { pool } = require("./database");
+const { GoogleGenAI } = require('@google/genai');
+
+const ai = new GoogleGenAI({});
 
 class AnswerService {
     async createAnswer(data) {
         try {
             console.log(`Creating answer...`);
+            console.log(data);
 
             // Real DB query - matches your ERD
             const [result] = await pool.execute(
@@ -82,7 +86,7 @@ class AnswerService {
                 isAnonymous: answer.is_anonymous,
                 score: answer.score,
                 firstname: answer.first_name,
-                firstname: answer.last_name,
+                lastname: answer.last_name,
                 created_at: answer.created_at,
                 updated_at: answer.updated_at,
                 userId: answer.user_id,
@@ -153,83 +157,84 @@ class AnswerService {
             throw new Error(err.message);
         }
     }
-async rateAnswer(data) {
-    try {
-        console.log(`Rating an answer...`);
 
-        const connection = await pool.getConnection();
-        await connection.beginTransaction();
-
+    async rateAnswer(data) {
         try {
-            // Check if user already voted on this answer
-            const [existingVotes] = await connection.execute(
-                `SELECT vote_id, vote_type FROM Votes 
-                 WHERE user_id = ? AND answer_id = ? AND question_id IS NULL`,
-                [data.userId, data.answerId]
-            );
+            console.log(`Rating an answer...`);
 
-            const newVoteType = data.type === 1 ? 'upvote' : 'downvote';
-            let previousVote = existingVotes.length > 0 ? existingVotes[0].vote_type : null;
+            const connection = await pool.getConnection();
+            await connection.beginTransaction();
 
-            // Insert, delete, or update vote
-            if (!previousVote) {
-                // No existing vote → add new
-                await connection.execute(
-                    `INSERT INTO Votes (vote_type, user_id, answer_id)
-                     VALUES (?, ?, ?)`,
-                    [newVoteType, data.userId, data.answerId]
-                );
-            } else if (previousVote === newVoteType) {
-                // Same vote → toggle off (remove)
-                await connection.execute(
-                    'DELETE FROM Votes WHERE vote_id = ?',
-                    [existingVotes[0].vote_id]
-                );
-            } else {
-                // Switch vote type
-                await connection.execute(
-                    'DELETE FROM Votes WHERE vote_id = ?',
-                    [existingVotes[0].vote_id]
+            try {
+                // Check if user already voted on this answer
+                const [existingVotes] = await connection.execute(
+                    `SELECT vote_id, vote_type FROM Votes 
+                    WHERE user_id = ? AND answer_id = ? AND question_id IS NULL`,
+                    [data.userId, data.answerId]
                 );
 
-                await connection.execute(
-                    `INSERT INTO Votes (vote_type, user_id, answer_id)
-                     VALUES (?, ?, ?)`,
-                    [newVoteType, data.userId, data.answerId]
+                const newVoteType = data.type === 1 ? 'upvote' : 'downvote';
+                let previousVote = existingVotes.length > 0 ? existingVotes[0].vote_type : null;
+
+                // Insert, delete, or update vote
+                if (!previousVote) {
+                    // No existing vote → add new
+                    await connection.execute(
+                        `INSERT INTO Votes (vote_type, user_id, answer_id)
+                        VALUES (?, ?, ?)`,
+                        [newVoteType, data.userId, data.answerId]
+                    );
+                } else if (previousVote === newVoteType) {
+                    // Same vote → toggle off (remove)
+                    await connection.execute(
+                        'DELETE FROM Votes WHERE vote_id = ?',
+                        [existingVotes[0].vote_id]
+                    );
+                } else {
+                    // Switch vote type
+                    await connection.execute(
+                        'DELETE FROM Votes WHERE vote_id = ?',
+                        [existingVotes[0].vote_id]
+                    );
+
+                    await connection.execute(
+                        `INSERT INTO Votes (vote_type, user_id, answer_id)
+                        VALUES (?, ?, ?)`,
+                        [newVoteType, data.userId, data.answerId]
+                    );
+
+                }
+
+                // Commit transaction
+                await connection.commit();
+
+                // Get the updated answer score and vote counts
+                const [answer] = await connection.execute(
+                    'SELECT score FROM Answer WHERE answer_id = ?',
+                    [data.answerId]
                 );
 
+                const voteCounts = await this.getVoteCounts(data.answerId);
+
+                return {
+                    answer_id: data.answerId,
+                    up_votes: voteCounts.upVotes,
+                    down_votes: voteCounts.downVotes,
+                    score: answer[0].score
+                };
+
+            } catch (error) {
+                await connection.rollback();
+                throw error;
+            } finally {
+                connection.release();
             }
 
-            // Commit transaction
-            await connection.commit();
-
-            // Get the updated answer score and vote counts
-            const [answer] = await connection.execute(
-                'SELECT score FROM Answer WHERE answer_id = ?',
-                [data.answerId]
-            );
-
-            const voteCounts = await this.getVoteCounts(data.answerId);
-
-            return {
-                answer_id: data.answerId,
-                up_votes: voteCounts.upVotes,
-                down_votes: voteCounts.downVotes,
-                score: answer[0].score
-            };
-
         } catch (error) {
-            await connection.rollback();
+            console.error('Error rating answer:', error);
             throw error;
-        } finally {
-            connection.release();
         }
-
-    } catch (error) {
-        console.error('Error rating answer:', error);
-        throw error;
     }
-}
 
    // Helper
     async getVoteCounts(answerId) {
@@ -246,6 +251,28 @@ async rateAnswer(data) {
             upVotes: votes[0].up_votes,
             downVotes: votes[0].down_votes
         };
+    }
+
+    async generateAnswer(data) {
+        try {
+            console.log(`AI generating answer...`);
+
+            // Generate an answer
+            const response = await ai.models.generateContent({
+                model: "gemini-2.5-flash",
+                contents: data.body + ". Please provide brief answer. Please do not use markdown. Answer in normal text only.",
+            });
+
+            // Insert the answer to table under the first user
+            data.body = response.text;
+            data["user_id"] = 1; // Should be replaced with AI user id.
+            data["is_anonymous"] = false;
+
+            return await this.createAnswer(data);
+        } catch (err) {
+            console.error('Error creating answer:', err);
+            throw new Error(err.message);
+        }
     }
 }
 

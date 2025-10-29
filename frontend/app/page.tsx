@@ -115,7 +115,7 @@ export default async function PraxisPage() {
                     key={q.questionId}
                     questionId={q.questionId}
                     title={q.title}
-                    tag={["tag1", "tag2"]}
+                    tag={(q as any).tags || (q as any).tag || []}
                     content={q.content}
                     username={`${q.firstname} ${q.lastname}`}
                     createdAt={q.createdAt}

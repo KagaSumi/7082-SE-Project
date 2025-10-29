@@ -9,6 +9,7 @@ import Sidebar from "../../../components/Sidebar";
 import Card from "../../../components/Card/Card";
 import PillButton from "../../../components/Card/PillButton";
 import QACard from "../../../components/QACard";
+import Tag from "../../../components/Card/Tag";
 
 // Models and Types
 import { QuestionWithAnswerModel, QuestionWithAnswer } from "../../../model/QuestionModel";
@@ -73,6 +74,12 @@ export default async function QuestionIdPage({
                   Views:{" "}
                   <span className="font-semibold">{question.viewCount}</span>
                 </p>
+              </div>
+              {/** Tags */}
+              <div className="mt-3 flex flex-row flex-wrap gap-1">
+                {((question as any).tags || (question as any).tag || []).map((t: string) => (
+                  <Tag key={t}>{t}</Tag>
+                ))}
               </div>
               <a
                 href={`/profile/${question.userId}`}
