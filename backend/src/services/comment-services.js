@@ -22,7 +22,7 @@ class CommentService {
             );
 
             const [rows] = await pool.execute(
-                `SELECT c.comment_id, c.body, c.created_at, c.updated_at,
+                `SELECT c.comment_id, c.body, c.created_at,
                         u.user_id, u.first_name, u.last_name,
                         c.question_id, c.answer_id
                  FROM Comment c
@@ -52,7 +52,7 @@ class CommentService {
             }
 
             const [rows] = await pool.execute(
-                `SELECT c.comment_id, c.body, c.created_at, c.updated_at,
+                `SELECT c.comment_id, c.body, c.created_at, 
                         u.user_id, u.first_name, u.last_name
                  FROM Comment c
                  JOIN User u ON c.user_id = u.user_id
@@ -85,13 +85,13 @@ class CommentService {
 
             await pool.execute(
                 `UPDATE Comment 
-                 SET body = ?, updated_at = CURRENT_TIMESTAMP
+                 SET body = ?, 
                  WHERE comment_id = ?`,
                 [data.body, data.comment_id]
             );
 
             const [rows] = await pool.execute(
-                `SELECT c.comment_id, c.body, c.created_at, c.updated_at,
+                `SELECT c.comment_id, c.body, c.created_at, 
                         u.user_id, u.first_name, u.last_name
                  FROM Comment c
                  JOIN User u ON c.user_id = u.user_id
@@ -130,3 +130,4 @@ class CommentService {
 }
 
 module.exports = new CommentService();
+
