@@ -1,4 +1,4 @@
-const tagService = require("../services/tag-service");
+const tagService = require("../services/tag-services");
 const ErrorCodes = require("../enums/error-code-enum");
 
 class TagController {
