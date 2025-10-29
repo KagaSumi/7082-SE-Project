@@ -7,7 +7,7 @@ class CourseService {
 
         // check if course already exists
         const [existing] = await pool.execute(
-            "SELECT * FROM Courses WHERE code = ?",
+            "SELECT * FROM Course WHERE code = ?",
             [code]
         );
 
@@ -16,14 +16,14 @@ class CourseService {
         }
 
         const [result] = await pool.execute(
-            "INSERT INTO Courses (name, code) VALUES (?, ?)",
+            "INSERT INTO Course (name, code) VALUES (?, ?)",
             [name, code]
         );
 
         const courseId = result.insertId;
 
         const [course] = await pool.execute(
-            "SELECT * FROM Courses WHERE course_id = ?",
+            "SELECT * FROM Course WHERE course_id = ?",
             [courseId]
         );
 
@@ -31,13 +31,13 @@ class CourseService {
     }
 
     async getAllCourses() {
-        const [rows] = await pool.execute("SELECT * FROM Courses");
+        const [rows] = await pool.execute("SELECT * FROM Course");
         return rows;
     }
 
     async getCourseById(courseId) {
         const [rows] = await pool.execute(
-            "SELECT * FROM Courses WHERE course_id = ?",
+            "SELECT * FROM Course WHERE course_id = ?",
             [courseId]
         );
 
@@ -50,7 +50,7 @@ class CourseService {
 
     async deleteCourse(courseId) {
         const [existing] = await pool.execute(
-            "SELECT * FROM Courses WHERE course_id = ?",
+            "SELECT * FROM Course WHERE course_id = ?",
             [courseId]
         );
 
@@ -58,7 +58,7 @@ class CourseService {
             throw new Error("Course not found");
         }
 
-        await pool.execute("DELETE FROM Courses WHERE course_id = ?", [courseId]);
+        await pool.execute("DELETE FROM Course WHERE course_id = ?", [courseId]);
         return { message: "Course deleted successfully" };
     }
 }

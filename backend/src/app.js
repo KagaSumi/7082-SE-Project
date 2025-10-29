@@ -24,7 +24,7 @@ app.use('/api/questions', questionRouter);
 app.use('/api/answers', answerRouter);
 app.use('/api/tags', tagRouter);
 app.use('/api/comments', commentRouter);
-app.use('/api/course', courseRouter);
+app.use('/api/courses', courseRouter);
 
 // Error handling middleware
 app.use((err, req, res, next) => {
@@ -37,6 +37,6 @@ app.use('/api/questions', questionRouter);
 app.use('/api/answers', answerRouter);
 app.use('/api/tag', tagRouter);
 app.use('/api/comments', commentRouter);
-app.use('/api/course', courseRouter);
+app.use('/api/courses', courseRouter);
 
 module.exports = app;
