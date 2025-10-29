@@ -1,4 +1,5 @@
 const { pool } = require("./database");
+const answerService = require('./answer-services');
 
 class QuestionService {
     async createQuestion(data) {
@@ -30,6 +31,15 @@ class QuestionService {
             const question = questions[0];
             const voteCounts = await this.getVoteCounts(question.question_id);
 
+            // Generate ai-suggested answer when a question is posted
+            const aiAnswerData = {
+                body: question.body,
+                question_id: question.question_id,
+                user_id: 1,
+                is_anonymous: false
+            };
+            question["answers"] = [await answerService.generateAnswer(aiAnswerData)];
+
             return {
                 questionId: question.question_id,
                 title: question.title,
@@ -42,7 +52,8 @@ class QuestionService {
                 createdAt: question.created_at,
                 updatedAt: question.updated_at,
                 upVotes: voteCounts.upVotes,
-                downVotes: voteCounts.downVotes
+                downVotes: voteCounts.downVotes,
+                answers: question.answers
             };
 
         } catch (err) {

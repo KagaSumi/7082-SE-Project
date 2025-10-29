@@ -71,6 +71,17 @@ class AnswerController {
             res.status(ErrorCodes.INVALID_REQUEST).send(err.message);
         });
     }
+
+    generateAnswer(req, res) {
+        answerService
+        .generateAnswer(req.body)
+        .then((response) => {
+            res.json(response);
+        })
+        .catch((err) => {
+            res.status(ErrorCodes.INVALID_REQUEST).send(err.message);
+        });
+    }
 }
 
 module.exports = new AnswerController();
