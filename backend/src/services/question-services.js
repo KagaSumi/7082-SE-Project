@@ -9,7 +9,7 @@ class QuestionService {
             console.log(`Creating question...`);
             await connection.beginTransaction();
 
-            // 1️⃣ Create question itself
+            // Create question itself
             const [result] = await connection.execute(
                 `INSERT INTO Question (title, body, user_id, course_id, is_anonymous) 
                  VALUES (?, ?, ?, ?, ?)`,
@@ -18,7 +18,7 @@ class QuestionService {
 
             const questionId = result.insertId;
 
-            // 2️⃣ Process tags (if provided)
+            // Process tags (if provided)
             if (data.tags && Array.isArray(data.tags)) {
                 console.log("Processing tags:", data.tags);
                 for (const rawTagName of data.tags) {
@@ -36,7 +36,7 @@ class QuestionService {
                 }
             }
 
-            // 3️⃣ Get question info with joins
+            // Get question info with joins
             const [questions] = await connection.execute(
                 `SELECT q.question_id, q.title, q.body, q.view_count, q.score, q.created_at, q.updated_at, q.is_anonymous,
                         u.user_id, u.first_name, u.last_name,
@@ -51,7 +51,7 @@ class QuestionService {
             if (questions.length === 0) throw new Error("Failed to create question");
             const question = questions[0];
 
-            // 4️⃣ Get tag names to return in response
+            // Get tag names to return in response
             const [tags] = await connection.execute(
                 `SELECT t.tag_id, t.name 
                  FROM Tag t 
@@ -62,7 +62,7 @@ class QuestionService {
             await connection.commit();
             connection.release();
 
-            // 5️⃣ Optional AI answer generation
+            // Optional AI answer generation
             const aiAnswerData = {
                 body: question.body,
                 question_id: question.question_id,
