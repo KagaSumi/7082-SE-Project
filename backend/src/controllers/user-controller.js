@@ -25,10 +25,23 @@ class UserController {
         });
     }
 
+    async update(req, res) {
+        try {
+            const userId = req.params.id;
+            const user = await userService.update(userId);
+            if (!user) {
+                return res.status(404).json({ error: 'User not found' });
+            }
+            res.json(user);
+        } catch (err) {
+            res.status(500).json({ error: err.message });
+        }
+    }
+
     async getUserById(req, res) {
         try {
             const userId = req.params.id;
-            const user = await userService.getUserById(userId);
+            const user = await userService.getUserById(userId,req.body);
             if (!user) {
                 return res.status(404).json({ error: 'User not found' });
             }

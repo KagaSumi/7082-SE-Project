@@ -1,19 +1,43 @@
 const { pool } = require("./database");
 const answerService = require('./answer-services');
+const tagService = require('./tag-services');
 
 class QuestionService {
     async createQuestion(data) {
+        const connection = await pool.getConnection();
         try {
             console.log(`Creating question...`);
+            await connection.beginTransaction();
 
-            const [result] = await pool.execute(
+            // 1️⃣ Create question itself
+            const [result] = await connection.execute(
                 `INSERT INTO Question (title, body, user_id, course_id, is_anonymous) 
                  VALUES (?, ?, ?, ?, ?)`,
                 [data.title, data.content, data.userId, data.courseId, data.isAnonymous || false]
             );
 
-            // Get the created question with user info
-            const [questions] = await pool.execute(
+            const questionId = result.insertId;
+
+            // 2️⃣ Process tags (if provided)
+            if (data.tags && Array.isArray(data.tags)) {
+                console.log("Processing tags:", data.tags);
+                for (const rawTagName of data.tags) {
+                    const tagName = rawTagName.trim().toLowerCase(); // normalize to prevent duplicates like "JS" vs "js"
+                    let tagId = await tagService.isTag(tagName);
+
+                    if (!tagId) {
+                        tagId = await tagService.createTag(tagName);
+                    }
+
+                    await connection.execute(
+                        `INSERT INTO QuestionTag (question_id, tag_id) VALUES (?, ?)`,
+                        [questionId, tagId]
+                    );
+                }
+            }
+
+            // 3️⃣ Get question info with joins
+            const [questions] = await connection.execute(
                 `SELECT q.question_id, q.title, q.body, q.view_count, q.score, q.created_at, q.updated_at, q.is_anonymous,
                         u.user_id, u.first_name, u.last_name,
                         c.course_id, c.name
@@ -21,17 +45,24 @@ class QuestionService {
                  JOIN User u ON q.user_id = u.user_id
                  JOIN Course c ON q.course_id = c.course_id
                  WHERE q.question_id = ?`,
-                [result.insertId]
+                [questionId]
             );
 
-            if (questions.length === 0) {
-                throw new Error("Failed to create question");
-            }
-
+            if (questions.length === 0) throw new Error("Failed to create question");
             const question = questions[0];
-            const voteCounts = await this.getVoteCounts(question.question_id);
 
-            // Generate ai-suggested answer when a question is posted
+            // 4️⃣ Get tag names to return in response
+            const [tags] = await connection.execute(
+                `SELECT t.tag_id, t.name 
+                 FROM Tag t 
+                 JOIN QuestionTag qt ON t.tag_id = qt.tag_id
+                 WHERE qt.question_id = ?`,
+                [questionId]
+            );
+            await connection.commit();
+            connection.release();
+
+            // 5️⃣ Optional AI answer generation
             const aiAnswerData = {
                 body: question.body,
                 question_id: question.question_id,
@@ -39,6 +70,8 @@ class QuestionService {
                 is_anonymous: false
             };
             question["answers"] = [await answerService.generateAnswer(aiAnswerData)];
+
+            await connection.commit();
 
             return {
                 questionId: question.question_id,
@@ -51,17 +84,18 @@ class QuestionService {
                 isAnonymous: Boolean(question.is_anonymous),
                 createdAt: question.created_at,
                 updatedAt: question.updated_at,
-                upVotes: voteCounts.upVotes,
-                downVotes: voteCounts.downVotes,
+                tags: tags.map(t => ({ tagId: t.tag_id, name: t.name })),
                 answers: question.answers
             };
 
         } catch (err) {
+            await connection.rollback();
             console.error('Error creating question:', err);
             throw new Error(err.message);
+        } finally {
+            connection.release();
         }
     }
-
     async getSingleQuestion(data) {
         try {
             console.log(`Getting a question with all answers...`);
@@ -107,7 +141,7 @@ class QuestionService {
 
             // Get vote counts for question and answers
             const questionVoteCounts = await this.getVoteCounts(question.question_id);
-            
+
             const answersWithVotes = await Promise.all(
                 answers.map(async (answer) => {
                     const answerVoteCounts = await this.getVoteCounts(answer.answer_id);
@@ -274,80 +308,80 @@ class QuestionService {
     }
 
     async rateQuestion(data) {
-    try {
-        console.log(`Rating a question...`);
-
-        const connection = await pool.getConnection();
-        await connection.beginTransaction();
-
         try {
-            // Check if user already voted on this question
-            const [existingVotes] = await connection.execute(
-                `SELECT vote_id, vote_type FROM Votes 
+            console.log(`Rating a question...`);
+
+            const connection = await pool.getConnection();
+            await connection.beginTransaction();
+
+            try {
+                // Check if user already voted on this question
+                const [existingVotes] = await connection.execute(
+                    `SELECT vote_id, vote_type FROM Votes 
                  WHERE user_id = ? AND question_id = ? AND answer_id IS NULL`,
-                [data.userId, data.questionId]
-            );
+                    [data.userId, data.questionId]
+                );
 
-            const voteType = data.type === 1 ? 'upvote' : 'downvote';
+                const voteType = data.type === 1 ? 'upvote' : 'downvote';
 
-            if (existingVotes.length === 0) {
-                // No existing vote → add new
-                await connection.execute(
-                    `INSERT INTO Votes (vote_type, user_id, question_id) 
+                if (existingVotes.length === 0) {
+                    // No existing vote → add new
+                    await connection.execute(
+                        `INSERT INTO Votes (vote_type, user_id, question_id) 
                      VALUES (?, ?, ?)`,
-                    [voteType, data.userId, data.questionId]
-                );
-            } else if (existingVotes[0].vote_type === voteType) {
-                // Same vote → toggle off (remove)
-                await connection.execute(
-                    'DELETE FROM Votes WHERE vote_id = ?',
-                    [existingVotes[0].vote_id]
-                );
-            } else {
-                // Switch vote type
-                await connection.execute(
-                    'DELETE FROM Votes WHERE vote_id = ?',
-                    [existingVotes[0].vote_id]
+                        [voteType, data.userId, data.questionId]
+                    );
+                } else if (existingVotes[0].vote_type === voteType) {
+                    // Same vote → toggle off (remove)
+                    await connection.execute(
+                        'DELETE FROM Votes WHERE vote_id = ?',
+                        [existingVotes[0].vote_id]
+                    );
+                } else {
+                    // Switch vote type
+                    await connection.execute(
+                        'DELETE FROM Votes WHERE vote_id = ?',
+                        [existingVotes[0].vote_id]
+                    );
+
+                    await connection.execute(
+                        `INSERT INTO Votes (vote_type, user_id, question_id) 
+                     VALUES (?, ?, ?)`,
+                        [voteType, data.userId, data.questionId]
+                    );
+                }
+
+                await connection.commit();
+
+                // Get the updated question score and vote counts
+                const [question] = await connection.execute(
+                    'SELECT score FROM Question WHERE question_id = ?',
+                    [data.questionId]
                 );
 
-                await connection.execute(
-                    `INSERT INTO Votes (vote_type, user_id, question_id) 
-                     VALUES (?, ?, ?)`,
-                    [voteType, data.userId, data.questionId]
-                );
+                const voteCounts = await this.getVoteCounts(data.questionId, 'question');
+
+                return {
+                    question_id: data.questionId,
+                    up_votes: voteCounts.upVotes,
+                    down_votes: voteCounts.downVotes,
+                    score: question[0].score
+                };
+
+            } catch (error) {
+                await connection.rollback();
+                throw error;
+            } finally {
+                connection.release();
             }
 
-            await connection.commit();
-
-            // Get the updated question score and vote counts
-            const [question] = await connection.execute(
-                'SELECT score FROM Question WHERE question_id = ?',
-                [data.questionId]
-            );
-
-            const voteCounts = await this.getVoteCounts(data.questionId, 'question');
-
-            return {
-                question_id: data.questionId,
-                up_votes: voteCounts.upVotes,
-                down_votes: voteCounts.downVotes,
-                score: question[0].score
-            };
-
         } catch (error) {
-            await connection.rollback();
+            console.error('Error rating question:', error);
             throw error;
-        } finally {
-            connection.release();
         }
-
-    } catch (error) {
-        console.error('Error rating question:', error);
-        throw error;
     }
-}
 
-      // Helper method to get vote counts for both questions and answers
+    // Helper method to get vote counts for both questions and answers
     async getVoteCounts(entityId) {
         const [votes] = await pool.execute(
             `SELECT 
