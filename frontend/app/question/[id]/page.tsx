@@ -81,12 +81,16 @@ export default async function QuestionIdPage({
                   <Tag key={t}>{t}</Tag>
                 ))}
               </div>
-              <a
-                href={`/profile/${question.userId}`}
-                className="text-sm text-slate-600 underline "
-              >
-              {question.firstname} {question.lastname}
-              </a>
+              {question.isAnonymous ? (
+                <div className="text-sm text-slate-600">Anonymous</div>
+              ) : (
+                <a
+                  href={`/profile/${question.userId}`}
+                  className="text-sm text-slate-600 underline "
+                >
+                  {question.firstname} {question.lastname}
+                </a>
+              )}
             </div>
           </Card>
 
@@ -108,15 +112,15 @@ export default async function QuestionIdPage({
                   const answerTotalVotes = answer.upVotes - answer.downVotes;
 
                   return (
-                      <QACard
-                        key={answer.answerId}
-                        questionId={question.questionId}
-                        type={QA.Answer}
-                        content={answer.content}
-                        totalVotes={answerTotalVotes}
-                        createdAt={answer.createdAt}
-                        username={`${answer.firstname} ${answer.lastname}`}
-                      />
+                    <QACard
+                      key={answer.answerId}
+                      questionId={question.questionId}
+                      type={QA.Answer}
+                      content={answer.content}
+                      totalVotes={answerTotalVotes}
+                      createdAt={answer.createdAt}
+                      username={answer.isAnonymous ? "Anonymous" : `${answer.firstname} ${answer.lastname}`}
+                    />
                   );
                 })}
               </div>

@@ -109,7 +109,7 @@ export default function ProfilePage() {
                       title={p.title}
                       tag={(p as any).tags || (p as any).tag || []}
                       content={p.content}
-                      username={user ? `${user.first_name} ${user.last_name}` : "User"}
+                      username={p.isAnonymous ? "Anonymous" : (user ? `${user.first_name} ${user.last_name}` : "User")}
                       createdAt={p.createdAt}
                       upvote={p.upVotes}
                       views={p.viewCount}
@@ -139,7 +139,7 @@ export default function ProfilePage() {
                       title={questionTitle}
                       tag={[]}
                       content={answer.content}
-                      username={user ? `${user.first_name} ${user.last_name}` : "User"}
+                      username={answer.isAnonymous ? "Anonymous" : (user ? `${user.first_name} ${user.last_name}` : "User")}
                       createdAt={answer.createdAt}
                       upvote={answer.upVotes}
                       views={0}
@@ -168,7 +168,7 @@ export default function ProfilePage() {
               {/* <div className="font-semibold text-slate-900">{user ? `${user.first_name} ${user.last_name}` : "Loading..."}</div> */}
               <div className="text-sm text-gray-500 mb-2">{staticUser.term}</div>
               <div className="text-sm text-gray-500 mb-1">{user ? user.email : ""}</div>
-              {/* <div className="font-medium text-slate-800">{staticUser.role}</div> */}              
+              {/* <div className="font-medium text-slate-800">{staticUser.role}</div> */}
               <div className="flex justify-between text-sm text-slate-700 mb-2">
                 <span>Questions {staticUser.questions}</span>
                 <span>Answers {staticUser.answers}</span>
@@ -189,6 +189,7 @@ export default function ProfilePage() {
                 <PillButton>Edit Details</PillButton>
                 <PillButton
                   onClick={() => {
+                    localStorage.removeItem("user");//only necessary until JWT tokens are implemented
                     logout();
                     router.push("/");
                   }}

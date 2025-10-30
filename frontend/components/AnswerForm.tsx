@@ -66,7 +66,11 @@ export default function AnswerForm({ questionId }: { questionId: number }) {
     try {
       // ✅ dynamically get user from localStorage (if available)
       const user = JSON.parse(localStorage.getItem("user") || "{}");
-      const userId = user?.userId ?? 1; // fallback to 1 for testing
+      const userId = user?.userId;
+      if (!userId) {
+        alert("You must be signed in to answer a question.");
+        return;
+      }
 
       // ✅ call backend
       const response = await submitAnswer({

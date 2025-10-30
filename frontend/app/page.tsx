@@ -117,7 +117,7 @@ export default async function PraxisPage() {
                     title={q.title}
                     tag={(q as any).tags || (q as any).tag || []}
                     content={q.content}
-                    username={`${q.firstname} ${q.lastname}`}
+                    username={q.isAnonymous ? "Anonymous" : `${q.firstname} ${q.lastname}`}
                     createdAt={q.createdAt}
                     upvote={q.upVotes - q.downVotes}
                     views={q.viewCount}
@@ -129,8 +129,8 @@ export default async function PraxisPage() {
           </Card>
         </section>
 
-  {/* Right Sidebar (Client Component) */}
-  <HomeClient />
+        {/* Right Sidebar (Client Component) */}
+        <HomeClient />
       </main>
     </div>
   );

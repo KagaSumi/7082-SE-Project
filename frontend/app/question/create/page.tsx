@@ -5,12 +5,12 @@ import Navbar from "../../../components/Navbar";
 import Card from "../../../components/Card/Card";
 import PillButton from "../../../components/Card/PillButton";
 
+//list of dummy courses until backend is ready
 const courses = [
   { id: 1, name: "MATH 3042 (Calculus)" },
   { id: 2, name: "COMP 1537 (Web Dev)" },
   { id: 3, name: "PHYS 3560 (Quantum Mechanics)" },
 ];
-
 
 export default function CreateQuestionPage() {
     const [title, setTitle] = useState("");
@@ -19,11 +19,10 @@ export default function CreateQuestionPage() {
     const [course, setCourse] = useState("");
     const router = useRouter();
 
-
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
 
-        // Validation: ensure a course is selected
+        // ensure a course is selected
         if (!course) {
             alert("Please select a course.");
             return;
@@ -31,13 +30,20 @@ export default function CreateQuestionPage() {
 
         try {
             const numericCourseId = Number(course);//need to do this until course backend stuff is ready
+            const storedUser = localStorage.getItem("user");//use local storage until user JWT tokens are implemented
+            const parsedUser = storedUser ? JSON.parse(storedUser) : null;
+            const userId = parsedUser?.userId;
+            if (!userId) {
+                alert("You must be signed in to post a question.");
+                return;
+            }
             const res = await fetch("http://localhost:3000/api/questions/", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
                     title,
                     content: body,
-                    userId: JSON.parse(localStorage.getItem("user")).userId,
+                    userId,
                     courseId: numericCourseId,
                     isAnonymous: anonymous,
                 }),
