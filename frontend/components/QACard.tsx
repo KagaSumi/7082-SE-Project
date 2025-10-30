@@ -30,6 +30,7 @@ export default function QACard({
       <div className="grid grid-cols-[50px_1fr] gap-5">
         {/** Upvote / Downvote */}
         <div className="flex flex-col items-center gap-2">
+          {/* Upvote */}
           <div className="rounded-full border border-gray-300 cursor-pointer hover:bg-blue-100">
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -42,6 +43,7 @@ export default function QACard({
             </svg>
           </div>
           <p className="text-xl">{totalVotes}</p>
+          {/* Downvote */}
           <div className="rounded-full border border-gray-300 cursor-pointer hover:bg-blue-100">
             <svg
               xmlns="http://www.w3.org/2000/svg"

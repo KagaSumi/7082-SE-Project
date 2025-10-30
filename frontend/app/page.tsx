@@ -14,7 +14,6 @@ import HomeClient from "../components/HomeClient";
 import Sidebar from "../components/Sidebar";
 
 export default async function PraxisPage() {
-
   const res = await fetch("http://localhost:3000/api/questions");
   if (!res.ok) throw new Error("Failed to fetch Question");
   const questionsJson: Array<Question> = await res.json();
@@ -102,8 +101,8 @@ export default async function PraxisPage() {
                 </svg>
               </button>
             </div>
-          </Card> */} {/* hiding this for demo. Eventually should take user input and route to the question/create page with data as title */}
-
+          </Card> */}{" "}
+          {/* hiding this for demo. Eventually should take user input and route to the question/create page with data as title */}
           <Card>
             <div className="flex flex-col gap-4 p-2">
               <h2 className="pl-2 text-xl font-semibold text-slate-900">
@@ -117,7 +116,11 @@ export default async function PraxisPage() {
                     title={q.title}
                     tag={(q as any).tags || (q as any).tag || []}
                     content={q.content}
-                    username={q.isAnonymous ? "Anonymous" : `${q.firstname} ${q.lastname}`}
+                    username={
+                      q.isAnonymous
+                        ? "Anonymous"
+                        : `${q.firstname} ${q.lastname}`
+                    }
                     createdAt={q.createdAt}
                     upvote={q.upVotes - q.downVotes}
                     views={q.viewCount}

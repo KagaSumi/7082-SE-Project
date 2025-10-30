@@ -10,9 +10,9 @@ const QuestionModel = z.object({
   viewCount: z.number(),
   upVotes: z.number(),
   downVotes: z.number(),
+  isAnonymous: z.boolean(),
   firstname: z.string(),
   lastname: z.string(),
-  isAnonymous: z.boolean(),
   createdAt: z.string(),
   updatedAt: z.string(),
   answerCount: z.number(),
@@ -34,9 +34,8 @@ const QuestionWithAnswerModel = z.object({
   createdAt: z.string(),
   updatedAt: z.string(),
   answers: z.array(AnswerModel),
-  tags: z.array(z.string()).optional()
+  tags: z.array(z.string()).optional(),
 });
-
 
 type Question = z.infer<typeof QuestionModel>;
 type QuestionWithAnswer = z.infer<typeof QuestionWithAnswerModel>;

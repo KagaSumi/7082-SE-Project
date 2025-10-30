@@ -26,9 +26,9 @@ async function submitAnswer({
   userId: number;
 }) {
   const body = JSON.stringify({
-    body: content,           // ✅ matches backend key
+    body: content, // ✅ matches backend key
     question_id: questionId, // ✅ snake_case key
-    user_id: userId,         // ✅ snake_case key
+    user_id: userId, // ✅ snake_case key
     is_anonymous: isAnonymous, // ✅ snake_case key
   });
 
@@ -129,4 +129,3 @@ export default function AnswerForm({ questionId }: { questionId: number }) {
     </details>
   );
 }
-

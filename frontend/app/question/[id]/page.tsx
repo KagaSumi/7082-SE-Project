@@ -1,18 +1,23 @@
 // url = /question/[id]
 
 import React from "react";
-import { z } from "zod";
+
+// Auth
+import { useAuth } from "../../../components/AuthContext";
 
 // Components
 import Navbar from "../../../components/Navbar";
 import Sidebar from "../../../components/Sidebar";
 import Card from "../../../components/Card/Card";
-import PillButton from "../../../components/Card/PillButton";
 import QACard from "../../../components/QACard";
 import Tag from "../../../components/Card/Tag";
+import QuestionCard from "../../../components/QuestionCard/QuestionCard";
 
 // Models and Types
-import { QuestionWithAnswerModel, QuestionWithAnswer } from "../../../model/QuestionModel";
+import {
+  QuestionWithAnswerModel,
+  QuestionWithAnswer,
+} from "../../../model/QuestionModel";
 import { Answer } from "../../../model/AnswerModel";
 
 // Enums
@@ -32,7 +37,8 @@ export default async function QuestionIdPage({
   questionJson.isAnonymous = !!questionJson.isAnonymous;
   if (Array.isArray(questionJson.answers)) {
     for (let i = 0; i < questionJson.answers.length; i++) {
-      questionJson.answers[i].isAnonymous = !!questionJson.answers[i].isAnonymous;
+      questionJson.answers[i].isAnonymous =
+        !!questionJson.answers[i].isAnonymous;
     }
   }
   // validate JSON
@@ -77,9 +83,11 @@ export default async function QuestionIdPage({
               </div>
               {/** Tags */}
               <div className="mt-3 flex flex-row flex-wrap gap-1">
-                {((question as any).tags || (question as any).tag || []).map((t: string) => (
-                  <Tag key={t}>{t}</Tag>
-                ))}
+                {((question as any).tags || (question as any).tag || []).map(
+                  (t: string) => (
+                    <Tag key={t}>{t}</Tag>
+                  ),
+                )}
               </div>
               {question.isAnonymous ? (
                 <div className="text-sm text-slate-600">Anonymous</div>
@@ -119,7 +127,11 @@ export default async function QuestionIdPage({
                       content={answer.content}
                       totalVotes={answerTotalVotes}
                       createdAt={answer.createdAt}
-                      username={answer.isAnonymous ? "Anonymous" : `${answer.firstname} ${answer.lastname}`}
+                      username={
+                        answer.isAnonymous
+                          ? "Anonymous"
+                          : `${answer.firstname} ${answer.lastname}`
+                      }
                     />
                   );
                 })}
