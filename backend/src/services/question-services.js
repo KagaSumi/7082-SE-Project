@@ -59,6 +59,8 @@ class QuestionService {
                  WHERE qt.question_id = ?`,
                 [questionId]
             );
+            await connection.commit();
+            connection.release();
 
             // 5️⃣ Optional AI answer generation
             const aiAnswerData = {
