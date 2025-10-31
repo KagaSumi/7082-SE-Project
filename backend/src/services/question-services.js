@@ -9,7 +9,7 @@ class QuestionService {
             console.log(`Creating question...`);
             await connection.beginTransaction();
 
-            // 1️⃣ Create question itself
+            // Create question itself
             const [result] = await connection.execute(
                 `INSERT INTO Question (title, body, user_id, course_id, is_anonymous) 
                  VALUES (?, ?, ?, ?, ?)`,
@@ -18,7 +18,7 @@ class QuestionService {
 
             const questionId = result.insertId;
 
-            // 2️⃣ Process tags (if provided)
+            // Process tags (if provided)
             if (data.tags && Array.isArray(data.tags)) {
                 console.log("Processing tags:", data.tags);
                 for (const rawTagName of data.tags) {
@@ -36,7 +36,7 @@ class QuestionService {
                 }
             }
 
-            // 3️⃣ Get question info with joins
+            // Get question info with joins
             const [questions] = await connection.execute(
                 `SELECT q.question_id, q.title, q.body, q.view_count, q.score, q.created_at, q.updated_at, q.is_anonymous,
                         u.user_id, u.first_name, u.last_name,
@@ -51,7 +51,7 @@ class QuestionService {
             if (questions.length === 0) throw new Error("Failed to create question");
             const question = questions[0];
 
-            // 4️⃣ Get tag names to return in response
+            // Get tag names to return in response
             const [tags] = await connection.execute(
                 `SELECT t.tag_id, t.name 
                  FROM Tag t 
@@ -62,7 +62,7 @@ class QuestionService {
             await connection.commit();
             connection.release();
 
-            // 5️⃣ Optional AI answer generation
+            // Optional AI answer generation
             const aiAnswerData = {
                 body: question.body,
                 question_id: question.question_id,
@@ -250,11 +250,14 @@ class QuestionService {
     }
 
     async updateQuestion(data) {
+        const connection = await pool.getConnection();
+
         try {
             console.log(`Updating the question...`);
+            await connection.beginTransaction();
 
             // Check if question exists and user owns it
-            const [existing] = await pool.execute(
+            const [existing] = await connection.execute(
                 'SELECT user_id FROM Question WHERE question_id = ?',
                 [data.questionId]
             );
@@ -263,20 +266,52 @@ class QuestionService {
                 throw new Error("Question ID doesn't exist!");
             }
 
-            // Update the question
-            await pool.execute(
+            // Update the question itself
+            await connection.execute(
                 `UPDATE Question 
-                 SET title = ?, body = ?, is_anonymous = ?, updated_at = CURRENT_TIMESTAMP
-                 WHERE question_id = ?`,
+             SET title = ?, body = ?, is_anonymous = ?, updated_at = CURRENT_TIMESTAMP
+             WHERE question_id = ?`,
                 [data.title, data.content, data.isAnonymous || false, data.questionId]
             );
 
-            // Return updated question
-            return await this.getSingleQuestion({ questionId: data.questionId });
+            // ✅ Handle tags (if provided)
+            if (data.tags && Array.isArray(data.tags)) {
+                console.log("Updating tags:", data.tags);
+
+                // Remove all existing tags for this question
+                await connection.execute(
+                    `DELETE FROM QuestionTag WHERE question_id = ?`,
+                    [data.questionId]
+                );
+
+                // Reinsert all current tags (add new ones if not exist)
+                for (const rawTagName of data.tags) {
+                    const tagName = rawTagName.trim().toLowerCase();
+
+                    let tagId = await tagService.isTag(tagName);
+                    if (!tagId) {
+                        tagId = await tagService.createTag(tagName);
+                    }
+
+                    await connection.execute(
+                        `INSERT INTO QuestionTag (question_id, tag_id) VALUES (?, ?)`,
+                        [data.questionId, tagId]
+                    );
+                }
+            }
+
+            await connection.commit();
+
+            // Return updated question with tags
+            const updatedQuestion = await this.getSingleQuestion({ questionId: data.questionId });
+            return updatedQuestion;
 
         } catch (err) {
+            await connection.rollback();
             console.error('Error updating question:', err);
             throw new Error(err.message);
+        } finally {
+            connection.release();
         }
     }
 
