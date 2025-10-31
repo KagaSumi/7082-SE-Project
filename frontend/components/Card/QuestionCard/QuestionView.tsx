@@ -1,7 +1,7 @@
 "use client";
 // componrnt
 import Card from "../Card";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Tag from "../Tag";
 import AnswerForm from "../../AnswerForm";
 
@@ -22,6 +22,8 @@ export default function QuestionView({
   const totalVotesInitial = question.upVotes - question.downVotes;
   const [votes, setVotes] = useState<number>(totalVotesInitial);
   const [loading, setLoading] = useState(false);
+  const [courseName, setCourseName] = useState<string | null>(null);
+  const [courseLoading, setCourseLoading] = useState<boolean>(false);
 
   const resolvedUserId = (() => {
     try {
@@ -63,6 +65,25 @@ export default function QuestionView({
     }
   }
 
+  // another request so we know what course the question is under...we should probably change backend to include this when viewing a post
+  useEffect(() => {
+    async function loadCourse() {
+      try {
+        setCourseLoading(true);
+        const res = await fetch(`http://localhost:3000/api/courses/${question.courseId}`);
+        if (!res.ok) throw new Error("Failed to load course");
+        const data = await res.json();
+        setCourseName(data?.name ?? data?.code ?? null);
+      } catch (e) {
+        setCourseName(null);
+        console.warn("Unable to fetch course details for question", question.courseId, e);
+      } finally {
+        setCourseLoading(false);
+      }
+    }
+    loadCourse();
+  }, [question.courseId]);
+
   return (
     <Card>
       <div className="flex flex-col gap-10 p-2">
@@ -84,6 +105,12 @@ export default function QuestionView({
             </p>
             <p className="text-sm text-slate-500">
               Views: <span className="font-semibold">{question.viewCount}</span>
+            </p>
+            <p className="text-sm text-slate-500">
+              Course:{" "}
+              <span className="font-semibold">
+                {courseLoading ? "Loading..." : (courseName ?? `#${question.courseId}`)}
+              </span>
             </p>
             <div className="text-sm text-slate-500">
               Author:{" "}
