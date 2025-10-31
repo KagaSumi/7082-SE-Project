@@ -1,23 +1,45 @@
 'use client'
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Navbar from "../../../components/Navbar";
 import Card from "../../../components/Card/Card";
 import PillButton from "../../../components/Card/PillButton";
-
-//list of dummy courses until backend is ready
-const courses = [
-  { id: 1, name: "MATH 3042 (Calculus)" },
-  { id: 2, name: "COMP 1537 (Web Dev)" },
-  { id: 3, name: "PHYS 3560 (Quantum Mechanics)" },
-];
 
 export default function CreateQuestionPage() {
     const [title, setTitle] = useState("");
     const [body, setBody] = useState("");
     const [anonymous, setAnonymous] = useState(false);
     const [course, setCourse] = useState("");
+    const [courses, setCourses] = useState<Array<{ course_id: number; name: string }>>([]);
+    const [coursesLoading, setCoursesLoading] = useState(true);
     const router = useRouter();
+
+    // Fetch courses from backend (DB)
+    useEffect(() => {
+        async function fetchCourses() {
+            setCoursesLoading(true);
+            try {
+                const res = await fetch("http://localhost:3000/api/courses");
+                if (!res.ok) throw new Error("Failed to fetch courses");
+                const data = await res.json();
+                const normalized = data.map((c: any) => ({
+                    course_id: c.course_id ?? c.id ?? c.courseId,
+                    name: c.name ?? c.title ?? c.code ?? "Unnamed Course",
+                }));
+                setCourses(normalized);
+
+                // Optional: print retrieved courses for debugging
+                console.log("Create Question - Courses from DB:", normalized);
+                console.table(normalized);
+            } catch (err) {
+                console.error("Error loading courses:", err);
+                setCourses([]);
+            } finally {
+                setCoursesLoading(false);
+            }
+        }
+        fetchCourses();
+    }, []);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -115,9 +137,9 @@ export default function CreateQuestionPage() {
                                 onChange={(e) => setCourse(e.target.value)}
                                 required
                             >
-                                <option value="">Select a course</option>
-                                {courses.map((c) => (
-                                    <option key={c.id} value={c.id}>
+                                <option value="">{coursesLoading ? "Loading courses..." : "Select a course"}</option>
+                                {!coursesLoading && courses.map((c) => (
+                                    <option key={c.course_id} value={c.course_id}>
                                         {c.name}
                                     </option>
                                 ))}

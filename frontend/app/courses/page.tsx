@@ -37,8 +37,13 @@ export default function CoursesPage() {
                 const res = await fetch("http://localhost:3000/api/courses");
                 if (!res.ok) throw new Error("Failed to fetch courses");
                 const data = await res.json();
-                // normalize to course_id/name shape if backend returns different keys
-                setCourses(data.map((c: any) => ({ course_id: c.course_id ?? c.id ?? c.courseId, name: c.name ?? c.title ?? c.code ?? "Unnamed Course" })));
+                // do this until we harmonize our naming conventions...
+                const normalizedCourses = data.map((c: any) => ({
+                    course_id: c.course_id ?? c.id ?? c.courseId,
+                    name: c.name ?? c.title ?? c.code ?? "Unnamed Course"
+                }));
+                setCourses(normalizedCourses);
+                
             } catch (err) {
                 setCourses([]);
             } finally {

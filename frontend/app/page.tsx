@@ -19,7 +19,7 @@ export default async function PraxisPage() {
   const questionsJson: Array<Question> = await res.json();
 
   questionsJson.forEach((question) => {
-    console.log(question);
+    //console.log(question);
     question.isAnonymous = question.isAnonymous ? true : false;
     const parseResult = QuestionModel.safeParse(question);
     if (!parseResult.success) {
