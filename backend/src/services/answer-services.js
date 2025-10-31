@@ -1,7 +1,5 @@
+const genericHelper = require("../helper-functions/generic-helper");
 const { pool } = require("./database");
-const { GoogleGenAI } = require("@google/genai");
-
-const ai = new GoogleGenAI({});
 
 class AnswerService {
   async createAnswer(data) {
@@ -252,12 +250,7 @@ class AnswerService {
       console.log(`AI generating answer...`);
 
       // Generate an answer
-      const response = await ai.models.generateContent({
-        model: "gemini-2.5-flash",
-        contents:
-          data.body +
-          ". Please provide brief answer. Please do not use markdown. Answer in normal text only.",
-      });
+      const response = await genericHelper.getAIResponse(data);
 
       // Insert the answer to table under the first user
       data.body = response.text;
