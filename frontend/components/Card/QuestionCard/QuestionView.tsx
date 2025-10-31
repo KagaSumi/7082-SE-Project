@@ -1,11 +1,11 @@
 "use client";
 // componrnt
-import Card from "../Card/Card";
-import Tag from "../Card/Tag";
-import AnswerForm from "../AnswerForm";
+import Card from "../Card";
+import Tag from "../Tag";
+import AnswerForm from "../../AnswerForm";
 
 // model
-import { QuestionWithAnswer } from "../../model/QuestionModel";
+import { QuestionWithAnswer } from "../../../model/QuestionModel";
 
 export default function QuestionView({
   question,
@@ -21,13 +21,16 @@ export default function QuestionView({
   const totalVotes = question.upVotes - question.downVotes;
 
   return (
-    // header section
-    <div className="flex flex-col gap-5">
-      <Card>
+    <Card>
+      <div className="flex flex-col gap-10 p-2">
+        {/* header section */}
         <div className="pl-2 flex flex-col gap-2">
+          {/* title */}
           <h1 className="text-2xl font-semibold text-slate-900">
             {question.title}
           </h1>
+
+          {/* info (name, when posted, etc) */}
           <div className="flex flex-row align-center gap-10">
             <p className="text-sm text-slate-500">
               Asked: <span className="font-semibold">{question.createdAt}</span>
@@ -39,6 +42,22 @@ export default function QuestionView({
             <p className="text-sm text-slate-500">
               Views: <span className="font-semibold">{question.viewCount}</span>
             </p>
+            <div className="text-sm text-slate-500">
+              Author:{" "}
+              <span className="font-semibold">
+                {/* if anon */}
+                {question.isAnonymous ? (
+                  <span className="text-sm text-slate-600">Anonymous</span>
+                ) : (
+                  <a
+                    href={`/profile/${question.userId}`}
+                    className="text-sm text-slate-600 underline "
+                  >
+                    {question.firstname} {question.lastname}
+                  </a>
+                )}
+              </span>
+            </div>
           </div>
 
           {/** Tags */}
@@ -49,23 +68,12 @@ export default function QuestionView({
               ),
             )}
           </div>
-          {question.isAnonymous ? (
-            <div className="text-sm text-slate-600">Anonymous</div>
-          ) : (
-            <a
-              href={`/profile/${question.userId}`}
-              className="text-sm text-slate-600 underline "
-            >
-              {question.firstname} {question.lastname}
-            </a>
-          )}
         </div>
-      </Card>
 
-      <Card>
-        <div className="flex flex-col gap-5 p-3">
-          <div className="grid grid-cols-[50px_1fr] gap-5">
-            {/** Upvote / Downvote */}
+        {/* content section */}
+        <div className="flex flex-col gap-5 p-1 relative">
+          <div className="relative grid grid-cols-[50px_1fr] gap-5 before:absolute before:top-[-26px] before:left-1/2 before:transform before:-translate-x-1/2 before:h-[1px] before:w-[100%] before:bg-slate-300 before:content-[''] ">
+            {/** voting section */}
             <div className="flex flex-col items-center gap-2">
               {/* Upvote */}
               <div className="rounded-full border border-gray-300 cursor-pointer hover:bg-blue-100">
@@ -121,7 +129,7 @@ export default function QuestionView({
             <AnswerForm questionId={question.questionId} />
           )}
         </div>
-      </Card>
-    </div>
+      </div>
+    </Card>
   );
 }

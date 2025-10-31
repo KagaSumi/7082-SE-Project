@@ -11,7 +11,7 @@ import Sidebar from "../../../components/Sidebar";
 import Card from "../../../components/Card/Card";
 import QACard from "../../../components/QACard";
 import Tag from "../../../components/Card/Tag";
-import QuestionCard from "../../../components/QuestionCard/QuestionCard";
+import QuestionCard from "../../../components/Card/QuestionCard/QuestionCard";
 
 // Models and Types
 import {

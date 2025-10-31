@@ -7,9 +7,9 @@ const AnswerModel = z.object({
   downVotes: z.number(),
   createdAt: z.string(),
   updatedAt: z.string(),
+  isAnonymous: z.boolean(),
   firstname: z.string(),
   lastname: z.string(),
-  isAnonymous: z.boolean(),
   userId: z.number(),
 });
 

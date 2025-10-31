@@ -2,15 +2,11 @@
 import React, { useState } from "react";
 
 // components
-import Card from "../Card/Card";
 import QuestionView from "./QuestionView";
 import QuestionEdit from "./QuestionEdit";
 
 // model
-import {
-  QuestionWithAnswer,
-  QuestionWithAnswerModel,
-} from "../../model/QuestionModel";
+import { QuestionWithAnswer } from "../../../model/QuestionModel";
 
 export default function QuestionCard({
   question,
@@ -28,9 +24,6 @@ export default function QuestionCard({
     }
 
     const newContentJson = JSON.stringify(newContent);
-    console.log(question.questionId);
-    console.log(newContentJson);
-
     await fetch(`http://localhost:3000/api/questions/${question.questionId}`, {
       method: "PUT",
       headers: {

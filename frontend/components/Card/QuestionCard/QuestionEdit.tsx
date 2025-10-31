@@ -2,13 +2,12 @@
 
 import { useState } from "react";
 
-// componrnt
-import Card from "../Card/Card";
-import Tag from "../Card/Tag";
-import AnswerForm from "../AnswerForm";
+// component
+import Card from "../Card";
+import Tag from "../Tag";
 
 // model
-import { QuestionWithAnswer } from "../../model/QuestionModel";
+import { QuestionWithAnswer } from "../../../model/QuestionModel";
 
 export default function QuestionEdit({
   question,
@@ -25,15 +24,21 @@ export default function QuestionEdit({
   const totalVotes = question.upVotes - question.downVotes;
 
   return (
-    // header section
     <div className="flex flex-col gap-5">
+      {/* header section */}
       <Card>
         <div className="pl-2 flex flex-col gap-2">
+          {/* title turns into input box */}
           <input
-            className="text-2xl font-semibold text-slate-900"
+            type="text"
+            name="title"
+            id="title"
+            className="text-2xl font-semibold text-slate- border border-slate-300 px-3 py-2 focus:ring-2 focus:ring-blue-500 outline-none rounded-lg"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
           />
+
+          {/* post informmation */}
           <div className="flex flex-row align-center gap-10">
             <p className="text-sm text-slate-500">
               Asked: <span className="font-semibold">{question.createdAt}</span>
@@ -45,6 +50,22 @@ export default function QuestionEdit({
             <p className="text-sm text-slate-500">
               Views: <span className="font-semibold">{question.viewCount}</span>
             </p>
+            <div className="text-sm text-slate-500">
+              Author:{" "}
+              <span className="font-semibold">
+                {/* if anon */}
+                {question.isAnonymous ? (
+                  <span className="text-sm text-slate-600">Anonymous</span>
+                ) : (
+                  <a
+                    href={`/profile/${question.userId}`}
+                    className="text-sm text-slate-600 underline "
+                  >
+                    {question.firstname} {question.lastname}
+                  </a>
+                )}
+              </span>
+            </div>
           </div>
 
           {/** Tags */}
@@ -55,16 +76,6 @@ export default function QuestionEdit({
               ),
             )}
           </div>
-          {question.isAnonymous ? (
-            <div className="text-sm text-slate-600">Anonymous</div>
-          ) : (
-            <a
-              href={`/profile/${question.userId}`}
-              className="text-sm text-slate-600 underline "
-            >
-              {question.firstname} {question.lastname}
-            </a>
-          )}
         </div>
       </Card>
 
@@ -112,32 +123,30 @@ export default function QuestionEdit({
             </div>
           </div>
 
-          <div className="flex flex-col">
-            <div className=" text-slate-500 text-sm flex flex-row gap-2 pl-2">
-              <form
-                className="flex flex-row gap-3"
-                onSubmit={(e) => {
-                  e.preventDefault();
-                  question.title = title;
-                  question.content = content;
-                  onSave(question);
-                }}
+          <div className=" text-slate-500 text-sm flex flex-row gap-2 pl-2">
+            <form
+              className="flex flex-row gap-3"
+              onSubmit={(e) => {
+                e.preventDefault();
+                question.title = title;
+                question.content = content;
+                onSave(question);
+              }}
+            >
+              <button
+                type="submit"
+                className="rounded-full bg-blue-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-blue-700 cursor-pointer"
               >
-                <button
-                  type="submit"
-                  className="rounded-full bg-blue-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-blue-700 cursor-pointer"
-                >
-                  Save
-                </button>
-                <button
-                  type="button"
-                  onClick={onCancel}
-                  className="cursor-pointer"
-                >
-                  Cancel
-                </button>
-              </form>
-            </div>
+                Save
+              </button>
+              <button
+                type="button"
+                onClick={onCancel}
+                className="cursor-pointer"
+              >
+                Cancel
+              </button>
+            </form>
           </div>
         </div>
       </Card>
