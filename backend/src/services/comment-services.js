@@ -1,4 +1,5 @@
 const { pool } = require("./database");
+const genericHelper = require("../helper-functions/generic-helper");
 
 class CommentService {
     // Create a new comment
@@ -127,6 +128,24 @@ class CommentService {
             throw new Error(err.message);
         }
     }
+
+      async generateAIComment(data) {
+        try {
+          console.log(`AI generating comment...`);
+    
+          // Generate a comment
+          const response = await genericHelper.getAIResponse(data);
+    
+          // Insert the comment to the table
+          data.body = response.text;
+          data["user_id"] = 1; // Should be replaced with AI user id.
+    
+          return await this.createComment(data);
+        } catch (err) {
+          console.error("Error generating AI comment:", err);
+          throw new Error(err.message);
+        }
+      }
 }
 
 module.exports = new CommentService();
