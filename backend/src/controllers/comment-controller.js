@@ -41,6 +41,14 @@ class CommentController {
             .then((result) => res.json(result))
             .catch((err) => res.status(ErrorCodes.INVALID_REQUEST).send(err.message));
     }
+
+    // GenerateAIComment
+    generateAIComment(req, res) {
+        commentService
+            .generateAIComment(req.body)
+            .then((result) => res.json(result))
+            .catch((err) => res.status(ErrorCodes.INVALID_REQUEST).send(err.message));
+    }
 }
 
 module.exports = new CommentController();
