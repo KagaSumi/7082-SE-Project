@@ -15,11 +15,13 @@ export default function AnswerEdit({
   onCancel: () => void;
 }) {
   const [content, setContent] = useState(answer.content);
+  const [isAnonymous, setIsAnonymous] = useState(
+    (answer as any).isAnonymous ?? false,
+  );
 
   const totalVotes = answer.upVotes - answer.downVotes;
 
   return (
-    // header section
     <div className="flex flex-col gap-5">
       <div className="flex flex-col gap-5 p-3">
         <div className="grid grid-cols-[50px_1fr] gap-5">
@@ -65,12 +67,23 @@ export default function AnswerEdit({
         </div>
 
         <div className="flex flex-col">
-          <div className=" text-slate-500 text-sm flex flex-row gap-2 pl-2">
+          <div className=" text-slate-500 text-sm flex flex-row gap-2 pl-2 items-center">
+            <input
+              id="answer-anonymous"
+              type="checkbox"
+              checked={isAnonymous}
+              onChange={(e) => setIsAnonymous(e.target.checked)}
+              className="w-4 h-4 mr-2"
+            />
+            <label htmlFor="answer-anonymous" className="text-sm text-slate-600 mr-4">
+              Post anonymously
+            </label>
             <form
               className="flex flex-row gap-3"
               onSubmit={(e) => {
                 e.preventDefault();
                 answer.content = content;
+                (answer as any).isAnonymous = isAnonymous;
                 onSave(answer);
               }}
             >

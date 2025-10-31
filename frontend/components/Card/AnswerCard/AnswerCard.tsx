@@ -13,10 +13,24 @@ export default function AnswerCard({
   currentUserId,
 }: {
   answer: Answer;
-  currentUserId: number;
+  currentUserId?: number;
 }) {
   const [isEditting, setIsEditting] = useState(false);
-  const isOwner = answer.userId == currentUserId;
+
+  const [resolvedCurrentUserId] = useState<number | null>(() => {
+    if (typeof currentUserId === "number") return currentUserId;
+    try {
+      const raw = localStorage.getItem("user");
+      if (!raw) return null;
+      const u = JSON.parse(raw);
+      const id = u?.userId ?? u?.user_id ?? u?.id ?? null;
+      return id == null ? null : Number(id);
+    } catch (e) {
+      return null;
+    }
+  });
+
+  const isOwner = resolvedCurrentUserId !== null && answer.userId === resolvedCurrentUserId;
 
   async function handleSave(newContent: Answer) {
     if (!confirm("Save this edit?")) {

@@ -28,7 +28,7 @@ class UserController {
     async update(req, res) {
         try {
             const userId = req.params.id;
-            const user = await userService.update(userId);
+            const user = await userService.update(userId, req.body);
             if (!user) {
                 return res.status(404).json({ error: 'User not found' });
             }
@@ -47,6 +47,17 @@ class UserController {
             }
             res.json(user);
         } catch (err) {
+            res.status(500).json({ error: err.message });
+        }
+    }
+
+    async getAnswersByUser(req, res) {
+        try {
+            const userId = req.params.id;
+            const answers = await userService.getAnswersByUser(userId);
+            res.json(answers);
+        } catch (err) {
+            console.error('Error in controller getAnswersByUser:', err);
             res.status(500).json({ error: err.message });
         }
     }

@@ -1,6 +1,7 @@
 "use client";
 // componrnt
 import Card from "../Card";
+import { useState } from "react";
 import Tag from "../Tag";
 import AnswerForm from "../../AnswerForm";
 
@@ -18,7 +19,49 @@ export default function QuestionView({
   onEdit: () => void;
   onDelete: () => Promise<void>;
 }) {
-  const totalVotes = question.upVotes - question.downVotes;
+  const totalVotesInitial = question.upVotes - question.downVotes;
+  const [votes, setVotes] = useState<number>(totalVotesInitial);
+  const [loading, setLoading] = useState(false);
+
+  const resolvedUserId = (() => {
+    try {
+      const raw = localStorage.getItem("user");
+      if (!raw) return null;
+      const u = JSON.parse(raw);
+      return u?.userId ?? u?.user_id ?? u?.id ?? null;
+    } catch (e) {
+      return null;
+    }
+  })();
+
+  async function sendVote(isUp: boolean) {
+    if (!resolvedUserId) {
+      alert("Please sign in to vote");
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const typeNum = isUp ? 1 : 0;
+      const url = `http://localhost:3000/api/questions/${question.questionId}/rate`;
+
+      const res = await fetch(url, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ userId: Number(resolvedUserId), type: typeNum }),
+      });
+
+      if (!res.ok) throw new Error("Voting failed");
+      const json = await res.json();
+      const newTotal = (json.up_votes ?? json.upVotes ?? 0) - (json.down_votes ?? json.downVotes ?? 0);
+      setVotes(newTotal);
+    } catch (err) {
+      console.error(err);
+      alert("Unable to submit vote");
+    } finally {
+      setLoading(false);
+    }
+  }
 
   return (
     <Card>
@@ -76,7 +119,7 @@ export default function QuestionView({
             {/** voting section */}
             <div className="flex flex-col items-center gap-2">
               {/* Upvote */}
-              <div className="rounded-full border border-gray-300 cursor-pointer hover:bg-blue-100">
+              <div onClick={() => sendVote(true)} className={`rounded-full border border-gray-300 cursor-pointer hover:bg-blue-100 ${loading ? 'opacity-60 pointer-events-none' : ''}`}>
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   height="30px"
@@ -87,9 +130,9 @@ export default function QuestionView({
                   <path d="m280-400 200-200 200 200H280Z" />
                 </svg>
               </div>
-              <p className="text-xl">{totalVotes}</p>
+              <p className="text-xl">{votes}</p>
               {/* Downvote */}
-              <div className="rounded-full border border-gray-300 cursor-pointer hover:bg-blue-100">
+              <div onClick={() => sendVote(false)} className={`rounded-full border border-gray-300 cursor-pointer hover:bg-blue-100 ${loading ? 'opacity-60 pointer-events-none' : ''}`}>
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   height="30px"

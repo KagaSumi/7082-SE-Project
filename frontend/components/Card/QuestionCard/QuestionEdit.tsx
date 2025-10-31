@@ -20,6 +20,9 @@ export default function QuestionEdit({
 }) {
   const [title, setTitle] = useState(question.title);
   const [content, setContent] = useState(question.content);
+  const [isAnonymous, setIsAnonymous] = useState(
+    (question as any).isAnonymous ?? false,
+  );
 
   const totalVotes = question.upVotes - question.downVotes;
 
@@ -38,7 +41,7 @@ export default function QuestionEdit({
             onChange={(e) => setTitle(e.target.value)}
           />
 
-          {/* post informmation */}
+          {/* post information */}
           <div className="flex flex-row align-center gap-10">
             <p className="text-sm text-slate-500">
               Asked: <span className="font-semibold">{question.createdAt}</span>
@@ -65,6 +68,19 @@ export default function QuestionEdit({
                   </a>
                 )}
               </span>
+            </div>
+            {/* anonymous checkbox when editing */}
+            <div className="flex items-center gap-2">
+              <input
+                id="question-anonymous"
+                type="checkbox"
+                checked={isAnonymous}
+                onChange={(e) => setIsAnonymous(e.target.checked)}
+                className="w-4 h-4"
+              />
+              <label htmlFor="question-anonymous" className="text-sm text-slate-600">
+                Post anonymously
+              </label>
             </div>
           </div>
 
@@ -130,6 +146,8 @@ export default function QuestionEdit({
                 e.preventDefault();
                 question.title = title;
                 question.content = content;
+                // persist anonymous flag
+                (question as any).isAnonymous = isAnonymous;
                 onSave(question);
               }}
             >

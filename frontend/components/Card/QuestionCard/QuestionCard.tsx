@@ -1,5 +1,6 @@
 "use client";
 import React, { useState } from "react";
+import { useRouter } from "next/navigation";
 
 // components
 import QuestionView from "./QuestionView";
@@ -13,10 +14,24 @@ export default function QuestionCard({
   currentUserId,
 }: {
   question: QuestionWithAnswer;
-  currentUserId: number;
+  currentUserId?: number;
 }) {
   const [isEditting, setIsEditting] = useState(false);
-  const isOwner = question.userId == currentUserId;
+  const [resolvedCurrentUserId] = useState<number | null>(() => {
+    if (typeof currentUserId === "number") return currentUserId;
+    try {
+      const raw = localStorage.getItem("user");
+      if (!raw) return null;
+      const u = JSON.parse(raw);
+      const id = u?.userId ?? u?.user_id ?? u?.id ?? null;//need this until we have consistent naming conventions
+      return id == null ? null : Number(id);
+    } catch (e) {
+      return null;
+    }
+  });
+
+  const isOwner = resolvedCurrentUserId !== null && question.userId === resolvedCurrentUserId;
+  const router = useRouter();
 
   async function handleSave(newContent: QuestionWithAnswer) {
     if (!confirm("Save this edit?")) {
@@ -40,9 +55,17 @@ export default function QuestionCard({
       return;
     }
 
-    await fetch(`http://localhost:3000/api/questions/${question.questionId}`, {
+    const res = await fetch(`http://localhost:3000/api/questions/${question.questionId}`, {
       method: "DELETE",
     });
+
+    if (res.ok) {
+      router.push("/");
+      return;
+    }
+
+    const text = await res.text().catch(() => "Failed to delete question");
+    alert(`Delete failed: ${text}`);
   }
 
   if (isEditting) {

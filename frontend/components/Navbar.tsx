@@ -74,42 +74,30 @@ export default function Navbar() {
                 <path d="M12 5v14M5 12h14" />
               </svg>
             </button></Link>
-            {isLoggedIn ? (
-              <Link
-                href="/profile"
-                className="text-slate-700 hover:text-blue-600 font-medium"
-              >
-                <img
-                  alt="User avatar"
-                  className="h-9 w-9 rounded-full object-cover cursor-pointer"
-                  src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=140&auto=format&fit=crop"
-                />
-              </Link>
-            ) : (
-              <Link
-                href="/login"
-                className="text-slate-700 hover:text-blue-600 font-medium"
-                title="Login"
-              >
-                <div className="h-9 w-9 flex items-center justify-center rounded-full bg-slate-200 cursor-pointer">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    strokeWidth={1.5}
-                    stroke="currentColor"
-                    className="w-6 h-6 text-slate-600"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="M12 17.25c2.485 0 4.5-2.015 4.5-4.5s-2.015-4.5-4.5-4.5-4.5 2.015-4.5 4.5 2.015 4.5 4.5 4.5zm0 0v1.5m0-1.5a6 6 0 100-12 6 6 0 000 12z"
-                    />
-                    <text x="7" y="16" fontSize="10" fill="currentColor">?</text>
-                  </svg>
-                </div>
-              </Link>
-            )}
+          {isLoggedIn ? (
+            <Link
+              href="/profile"
+              className="text-slate-700 hover:text-blue-600 font-medium"
+            >
+              <img
+                alt="User avatar"
+                className="h-9 w-9 rounded-full object-cover cursor-pointer"
+                src="https://www.gravatar.com/avatar/?d=mp&s=140"
+              />
+            </Link>
+          ) : (
+            <Link
+              href="/login"
+              className="text-slate-700 hover:text-blue-600 font-medium"
+              title="Login"
+            >
+              <img
+                alt="Login"
+                className="h-9 w-9 rounded-full object-cover cursor-pointer bg-slate-200"
+                src={"data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='36' height='36' viewBox='0%200%2024%2024'><circle cx='12' cy='12' r='11' fill='%23e2e8f0'/><text x='12' y='16' font-size='12' text-anchor='middle' fill='%23475569' font-family='Arial%2C%20Helvetica%2C%20sans-serif'>?</text></svg>"}
+              />
+            </Link>
+          )}
         </div>
       </div>
     </header>

@@ -36,11 +36,9 @@ export default function LoginPage() {
       setSuccess(true);
       setLoading(false);
 
-      // Store user in localStorage or context
       localStorage.setItem("user", JSON.stringify(data));
-      login();
+      login(data);
 
-      // Redirect to home after a short delay
       setTimeout(() => {
         router.push("/");
       }, 1000);

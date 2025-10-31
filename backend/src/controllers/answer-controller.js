@@ -4,83 +4,83 @@ const ErrorCodes = require("../enums/error-code-enum");
 class AnswerController {
     createAnswer(req, res) {
         answerService
-        .createAnswer(req.body)
-        .then((answer) => {
-            res.json(answer);
-        })
-        .catch((err) => {
-            res.status(ErrorCodes.INVALID_REQUEST).send(err.message);
-        });
+            .createAnswer(req.body)
+            .then((answer) => {
+                res.json(answer);
+            })
+            .catch((err) => {
+                res.status(ErrorCodes.INVALID_REQUEST).send(err.message);
+            });
     }
 
     getOneAnswer(req, res) {
-        const {answerId} = req.params;
+        const { answerId } = req.params;
 
         answerService
-        .getOneAnswer({"answerId": answerId})
-        .then((answer) => {
-            res.json(answer);
-        })
-        .catch((err) => {
-            res.status(ErrorCodes.INVALID_REQUEST).send(err.message);
-        });
+            .getOneAnswer({ "answerId": answerId })
+            .then((answer) => {
+                res.json(answer);
+            })
+            .catch((err) => {
+                res.status(ErrorCodes.INVALID_REQUEST).send(err.message);
+            });
     }
 
     updateAnswer(req, res) {
-        const {answerId} = req.params;
+        const { answerId } = req.params;
 
         let data = req.body;
         data["answerId"] = answerId;
         data["isAnonymous"] = (data.isAnonymous === "true");
 
         answerService
-        .updateAnswer(data)
-        .then((answer) => {
-            res.json(answer);
-        })
-        .catch((err) => {
-            res.status(ErrorCodes.INVALID_REQUEST).send(err.message);
-        });
+            .updateAnswer(data)
+            .then((answer) => {
+                res.json(answer);
+            })
+            .catch((err) => {
+                res.status(ErrorCodes.INVALID_REQUEST).send(err.message);
+            });
     }
 
     deleteAnswer(req, res) {
-        const {answerId} = req.params;
+        const { answerId } = req.params;
 
         answerService
-        .deleteAnswer({"answerId": answerId})
-        .then((response) => {
-            res.json(response);
-        })
-        .catch((err) => {
-            res.status(ErrorCodes.INVALID_REQUEST).send(err.message);
-        });
+            .deleteAnswer({ "answerId": answerId })
+            .then((response) => {
+                res.json(response);
+            })
+            .catch((err) => {
+                res.status(ErrorCodes.INVALID_REQUEST).send(err.message);
+            });
     }
 
     rateAnswer(req, res) {
-        const {answerId} = req.params;
+        const { answerId } = req.params;
 
         let data = req.body;
         data["answerId"] = answerId;
 
         answerService
-        .rateAnswer(data)
-        .then((response) => {
-            res.json(response);
-        })
-        .catch((err) => {
-            res.status(ErrorCodes.INVALID_REQUEST).send(err.message);
-        });
+            .rateAnswer(data)
+            .then((response) => {
+                res.json(response);
+            })
+            .catch((err) => {
+                res.status(ErrorCodes.INVALID_REQUEST).send(err.message);
+            });
     }
 
     generateAnswer(req, res) {
         answerService
-        .generateAnswer(req.body)
-        .then((response) => {
-            res.json(response);
-        })
-        .catch((err) => {
-            res.status(ErrorCodes.INVALID_REQUEST).send(err.message);
-        });
+            .generateAnswer(req.body)
+            .then((response) => {
+                res.json(response);
+            })
+            .catch((err) => {
+                res.status(ErrorCodes.INVALID_REQUEST).send(err.message);
+            });
     }
 }
 
