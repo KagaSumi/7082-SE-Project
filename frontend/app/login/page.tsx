@@ -27,10 +27,16 @@ export default function LoginPage() {
         body: JSON.stringify({ email, password }),
       });
 
-      const data = await res.json();
-
+      // try to parse JSON response, but guard against invalid/non-JSON bodies so users get a proper error when login is invalid
+      let data: any = null;
+      try {
+        data = await res.json();
+      } catch (parseErr) {
+        // ignore parse error; data will remain null
+      }
       if (!res.ok) {
-        throw new Error(data.message || "Login failed");
+        const msg = (data && data.message) ? data.message : "Invalid credentials";
+        throw new Error(msg);
       }
 
       setSuccess(true);
