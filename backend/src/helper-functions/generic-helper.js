@@ -1,3 +1,7 @@
+const { GoogleGenAI } = require("@google/genai");
+
+const ai = new GoogleGenAI({});
+
 class GenericHelper {
     // This function mimics the wait time when querying data from the DB
     sleep(ms) {
@@ -16,6 +20,15 @@ class GenericHelper {
         const formattedDateTime = `${month}/${day}/${year}`;
 
         return formattedDateTime;
+    }
+
+    async getAIResponse(data) {
+        return await ai.models.generateContent({
+            model: "gemini-2.5-flash",
+            contents:
+            data.body +
+            ". Please provide brief answer. Please do not use markdown. Answer in normal text only.",
+        });
     }
 }
 

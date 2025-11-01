@@ -139,6 +139,17 @@ class QuestionService {
                 [data.questionId]
             );
 
+            // Get all comments for this question
+            const [comments] = await pool.execute(
+                `SELECT a.question_id, a.body, a.created_at,
+                        u.user_id, u.first_name, u.last_name
+                 FROM Comment a
+                 JOIN User u ON a.user_id = u.user_id
+                 WHERE a.question_id = ?
+                 ORDER BY a.created_at ASC`,
+                [data.questionId]
+            );
+
             // Get vote counts for question and answers
             const questionVoteCounts = await this.getVoteCounts(question.question_id);
 
@@ -178,7 +189,8 @@ class QuestionService {
                 tags: question.tags ? question.tags.split(',').map(t => t.trim()).filter(Boolean) : [],
                 upVotes: questionVoteCounts.upVotes,
                 downVotes: questionVoteCounts.downVotes,
-                answers: answersWithVotes
+                answers: answersWithVotes,
+                comments: comments
             };
 
         } catch (err) {

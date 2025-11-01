@@ -7,6 +7,7 @@ router.get("/question/:questionId", commentController.getComments);
 router.get("/answer/:answerId", commentController.getComments);
 router.put("/:commentId", commentController.updateComment);
 router.delete("/:commentId", commentController.deleteComment);
+router.post("/generate-ai-comment", commentController.generateAIComment);
 
 module.exports = router;
 
