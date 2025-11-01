@@ -12,6 +12,7 @@ import Card from "../../../components/Card/Card";
 import PillButton from "../../../components/Card/PillButton";
 import QACard from "../../../components/QACard";
 import Tag from "../../../components/Card/Tag";
+import { formatDate } from '../../../lib/formatDate';
 
 // Models and Types
 import { QuestionWithAnswerModel, QuestionWithAnswer } from "../../../model/QuestionModel";
@@ -66,11 +67,11 @@ export default async function QuestionIdPage({
               <div className="flex flex-row align-center gap-10">
                 <p className="text-sm text-slate-500">
                   Asked:{" "}
-                  <span className="font-semibold">{question.createdAt}</span>
+                  <span className="font-semibold">{formatDate(question.createdAt)}</span>
                 </p>
                 <p className="text-sm text-slate-500">
                   Modified:{" "}
-                  <span className="font-semibold">{question.updatedAt}</span>
+                  <span className="font-semibold">{formatDate(question.updatedAt)}</span>
                 </p>
                 <p className="text-sm text-slate-500">
                   Views:{" "}

@@ -1,8 +1,9 @@
 "use client";
-// componrnt
+// components
 import Card from "../Card";
 import { useEffect, useState } from "react";
 import Tag from "../Tag";
+import { formatDate } from '../../../lib/formatDate';
 import AnswerForm from "../../AnswerForm";
 
 // model
@@ -97,11 +98,11 @@ export default function QuestionView({
           {/* info (name, when posted, etc) */}
           <div className="flex flex-row align-center gap-10">
             <p className="text-sm text-slate-500">
-              Asked: <span className="font-semibold">{question.createdAt}</span>
+              Asked: <span className="font-semibold">{formatDate(question.createdAt)}</span>
             </p>
             <p className="text-sm text-slate-500">
               Modified:{" "}
-              <span className="font-semibold">{question.updatedAt}</span>
+              <span className="font-semibold">{formatDate(question.updatedAt)}</span>
             </p>
             <p className="text-sm text-slate-500">
               Views: <span className="font-semibold">{question.viewCount}</span>

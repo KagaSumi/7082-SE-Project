@@ -5,6 +5,8 @@ import { useState } from "react";
 // component
 import Card from "../Card";
 import Tag from "../Tag";
+import TagEditor from "../../TagEditor";
+import { formatDate } from '../../../lib/formatDate';
 
 // model
 import { QuestionWithAnswer } from "../../../model/QuestionModel";
@@ -23,8 +25,17 @@ export default function QuestionEdit({
   const [isAnonymous, setIsAnonymous] = useState(
     (question as any).isAnonymous ?? false,
   );
+  const [selectedTags, setSelectedTags] = useState<string[]>(() => {
+    const t = (question as any).tags || (question as any).tag || [];
+    return Array.isArray(t) ? t.map((s: string) => s.toString().toLowerCase()) : [];
+  });
 
   const totalVotes = question.upVotes - question.downVotes;
+
+  function removeSelectedTag(tagName: string) {
+    const name = tagName.trim().toLowerCase();
+    setSelectedTags((prev) => prev.filter((t) => t !== name));
+  }
 
   return (
     <div className="flex flex-col gap-5">
@@ -44,11 +55,11 @@ export default function QuestionEdit({
           {/* post information */}
           <div className="flex flex-row align-center gap-10">
             <p className="text-sm text-slate-500">
-              Asked: <span className="font-semibold">{question.createdAt}</span>
+              Asked: <span className="font-semibold">{formatDate(question.createdAt)}</span>
             </p>
             <p className="text-sm text-slate-500">
               Modified:{" "}
-              <span className="font-semibold">{question.updatedAt}</span>
+              <span className="font-semibold">{formatDate(question.updatedAt)}</span>
             </p>
             <p className="text-sm text-slate-500">
               Views: <span className="font-semibold">{question.viewCount}</span>
@@ -85,12 +96,8 @@ export default function QuestionEdit({
           </div>
 
           {/** Tags */}
-          <div className="mt-3 flex flex-row flex-wrap gap-1">
-            {((question as any).tags || (question as any).tag || []).map(
-              (t: string) => (
-                <Tag key={t}>{t}</Tag>
-              ),
-            )}
+          <div className="mt-3 w-full">
+            <TagEditor value={selectedTags} onChange={setSelectedTags} placeholder="Add tags (press Enter to add)" />
           </div>
         </div>
       </Card>
@@ -146,8 +153,8 @@ export default function QuestionEdit({
                 e.preventDefault();
                 question.title = title;
                 question.content = content;
-                // persist anonymous flag
                 (question as any).isAnonymous = isAnonymous;
+                (question as any).tags = selectedTags;
                 onSave(question);
               }}
             >

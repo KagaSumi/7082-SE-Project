@@ -3,6 +3,7 @@
 import { useState } from "react";
 // model
 import { Answer } from "../../../model/AnswerModel";
+import { formatDate } from '../../../lib/formatDate';
 
 export default function AnswerView({
   answer,
@@ -123,7 +124,7 @@ export default function AnswerView({
         </div>
 
         <div>
-          <p>answered at {answer.createdAt}</p>
+          <p>answered at {formatDate(answer.createdAt)}</p>
           <p className="cursor-pointer text-blue-500">
             {isAI ? (
               <span className="inline-flex items-center gap-2">

@@ -4,6 +4,7 @@ import Link from "next/link";
 import Card from "./Card/Card";
 import Tag from "./Card/Tag";
 import PillButton from "./Card/PillButton";
+import { formatDate } from '../lib/formatDate';
 
 export default function ViewPostCard({
   questionId,
@@ -39,7 +40,7 @@ export default function ViewPostCard({
       <div className="mb-3 text-xs text-slate-500">
         <span className="font-medium text-slate-700">{username}</span>
         <span className="mx-2">•</span>
-        <span>{createdAt}</span>
+        <span>{formatDate(createdAt)}</span>
       </div>
 
       {/** Content */}

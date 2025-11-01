@@ -3,6 +3,7 @@ import React from "react";
 
 // Components
 import PillButton from "./Card/PillButton";
+import { formatDate } from '../lib/formatDate';
 import AnswerForm from "./AnswerForm";
 
 enum QA {
@@ -72,7 +73,7 @@ export default function QACard({
                 {/* <p>Delete</p> implemented after auth*/}
               </div>
               <div>
-                <p>answered at {createdAt}</p>
+                <p>answered at {createdAt ? formatDate(createdAt) : ''}</p>
                 <p className="cursor-pointer text-blue-500">{username}</p>
               </div>
             </div>

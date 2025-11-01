@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import Navbar from "../../../components/Navbar";
 import Card from "../../../components/Card/Card";
 import PillButton from "../../../components/Card/PillButton";
+import TagEditor from "../../../components/TagEditor";
 
 export default function CreateQuestionPage() {
     const [title, setTitle] = useState("");
@@ -12,13 +13,11 @@ export default function CreateQuestionPage() {
     const [course, setCourse] = useState("");
     const [courses, setCourses] = useState<Array<{ course_id: number; name: string }>>([]);
     const [coursesLoading, setCoursesLoading] = useState(true);
-    const [availableTags, setAvailableTags] = useState<Array<{ tag_id: number; name: string }>>([]);
-    const [tagsLoading, setTagsLoading] = useState<boolean>(true);
     const [selectedTags, setSelectedTags] = useState<string[]>([]);
-    const [tagsInput, setTagsInput] = useState<string>("");
+
     const router = useRouter();
 
-    // Fetch courses from backend (DB)
+    // Fetch courses from DB
     useEffect(() => {
         async function fetchCourses() {
             setCoursesLoading(true);
@@ -44,56 +43,6 @@ export default function CreateQuestionPage() {
         }
         fetchCourses();
     }, []);
-
-    // Fetch available tags from backend
-    useEffect(() => {
-        async function fetchTags() {
-            setTagsLoading(true);
-            try {
-                const res = await fetch("http://localhost:3000/api/tags");
-                if (!res.ok) throw new Error("Failed to fetch tags");
-                const data = await res.json();
-                const normalized = (data || []).map((t: any) => ({
-                    tag_id: t.tag_id ?? t.id ?? t.tagId,
-                    name: (t.name ?? "").toString(),
-                }));
-                setAvailableTags(normalized);
-            } catch (err) {
-                console.error("Error loading tags:", err);
-                setAvailableTags([]);
-            } finally {
-                setTagsLoading(false);
-            }
-        }
-        fetchTags();
-    }, []);
-
-    // allows user to type in multiple words and treats each word as a tag
-    function addTypedTags(input: string) {
-        const parts = input
-            .split(/\s+/)
-            .map((s) => s.trim().toLowerCase())
-            .filter(Boolean);
-        if (parts.length === 0) return;
-        setSelectedTags((prev) => {
-            const set = new Set(prev.map((t) => t.toLowerCase()));
-            parts.forEach((p) => set.add(p));
-            return Array.from(set);
-        });
-        setTagsInput("");
-    }
-
-    function toggleExistingTag(tagName: string) {
-        const name = tagName.trim().toLowerCase();
-        setSelectedTags((prev) =>
-            prev.includes(name) ? prev.filter((t) => t !== name) : [...prev, name]
-        );
-    }
-
-    function removeSelectedTag(tagName: string) {
-        const name = tagName.trim().toLowerCase();
-        setSelectedTags((prev) => prev.filter((t) => t !== name));
-    }
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -206,81 +155,7 @@ export default function CreateQuestionPage() {
                             <label className="block text-sm font-medium text-slate-700">
                                 Tags
                             </label>
-                            {/* Tag input with suggestion dropdown */}
-                            <div className="rounded-lg border border-slate-200 p-3 relative">
-                                <p className="text-xs text-slate-500 mb-2">
-                                    {tagsLoading ? "Loading available tags..." : "Start typing to see matching existing tags:"}
-                                </p>
-                                <div className="relative">
-                                    <input
-                                        type="text"
-                                        value={tagsInput}
-                                        onChange={(e) => setTagsInput(e.target.value)}
-                                        onKeyDown={(e) => {
-                                            if (e.key === 'Enter') {
-                                                e.preventDefault();
-                                                addTypedTags(tagsInput);
-                                            }
-                                        }}
-                                        placeholder="e.g. arrays sorting dp"
-                                        className="w-full rounded-lg border border-slate-300 px-3 py-2 text-base focus:ring-2 focus:ring-blue-500 outline-none"
-                                    />
-                                    <button
-                                        type="button"
-                                        className="absolute right-2 top-1/2 -translate-y-1/2 rounded-lg bg-blue-600 text-white px-3 py-1 text-sm hover:bg-blue-700"
-                                        onClick={() => addTypedTags(tagsInput)}
-                                    >
-                                        Add
-                                    </button>
-
-                                    {/* Suggestions dropdown */}
-                                    {!tagsLoading && tagsInput.trim().length > 0 && (
-                                        (() => {
-                                            const q = tagsInput.trim().toLowerCase();
-                                            const suggestions = availableTags
-                                                .map((t) => ({ id: t.tag_id, name: (t.name || '').toString() }))
-                                                .filter((t) => t.name.toLowerCase().includes(q) && !selectedTags.includes(t.name.toLowerCase()));
-                                            if (suggestions.length === 0) return null;
-                                            return (
-                                                <ul className="absolute z-20 mt-2 w-full max-h-52 overflow-auto rounded-md border bg-white shadow">
-                                                    {suggestions.map((s) => (
-                                                        <li
-                                                            key={s.id}
-                                                            className="px-3 py-2 hover:bg-slate-100 cursor-pointer text-sm"
-                                                            onClick={() => {
-                                                                const name = s.name.toLowerCase();
-                                                                setSelectedTags((prev) => prev.includes(name) ? prev : [...prev, name]);
-                                                                setTagsInput("");
-                                                            }}
-                                                        >
-                                                            {s.name}
-                                                        </li>
-                                                    ))}
-                                                </ul>
-                                            );
-                                        })()
-                                    )}
-                                </div>
-                            </div>
-
-                            {/* Selected tags */}
-                            {selectedTags.length > 0 && (
-                                <div className="mt-3 flex flex-row flex-wrap gap-2">
-                                    {selectedTags.map((t) => (
-                                        <span key={t} className="inline-flex items-center gap-2 px-2 py-1 rounded-full border border-slate-300 bg-white text-sm">
-                                            {t}
-                                            <button
-                                                type="button"
-                                                className="text-slate-500 hover:text-slate-700"
-                                                onClick={() => removeSelectedTag(t)}
-                                                aria-label={`Remove tag ${t}`}
-                                            >
-                                                ×
-                                            </button>
-                                        </span>
-                                    ))}
-                                </div>
-                            )}
+                            <TagEditor value={selectedTags} onChange={setSelectedTags} placeholder="Start typing to see matching existing tags" />
                         </div>
                         {/* Anonymous option */}
                         <div className="flex items-center gap-2">
