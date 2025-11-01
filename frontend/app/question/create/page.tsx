@@ -206,42 +206,12 @@ export default function CreateQuestionPage() {
                             <label className="block text-sm font-medium text-slate-700">
                                 Tags
                             </label>
-                            {/* Available tags selector */}
-                            <div className="rounded-lg border border-slate-200 p-3">
+                            {/* Tag input with suggestion dropdown */}
+                            <div className="rounded-lg border border-slate-200 p-3 relative">
                                 <p className="text-xs text-slate-500 mb-2">
-                                    {tagsLoading ? "Loading available tags..." : "Select existing tags:"}
+                                    {tagsLoading ? "Loading available tags..." : "Start typing to see matching existing tags:"}
                                 </p>
-                                {!tagsLoading && availableTags.length > 0 ? (
-                                    <div className="flex flex-row flex-wrap gap-3">
-                                        {availableTags.map((t) => {
-                                            const name = t.name.toLowerCase();
-                                            const checked = selectedTags.includes(name);
-                                            return (
-                                                <label key={t.tag_id} className="inline-flex items-center gap-2 text-sm">
-                                                    <input
-                                                        type="checkbox"
-                                                        className="h-4 w-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500"
-                                                        checked={checked}
-                                                        onChange={() => toggleExistingTag(name)}
-                                                    />
-                                                    <span className="px-2 py-1 rounded-full border border-slate-300 bg-slate-50">
-                                                        {t.name}
-                                                    </span>
-                                                </label>
-                                            );
-                                        })}
-                                    </div>
-                                ) : !tagsLoading ? (
-                                    <p className="text-sm text-slate-500">No tags available.</p>
-                                ) : null}
-                            </div>
-
-                            {/* Free-form tag input */}
-                            <div className="rounded-lg border border-slate-200 p-3">
-                                <p className="text-xs text-slate-500 mb-2">
-                                    Type one or more words separated by whitespace; each word becomes a tag.
-                                </p>
-                                <div className="flex gap-2">
+                                <div className="relative">
                                     <input
                                         type="text"
                                         value={tagsInput}
@@ -253,38 +223,66 @@ export default function CreateQuestionPage() {
                                             }
                                         }}
                                         placeholder="e.g. arrays sorting dp"
-                                        className="flex-1 rounded-lg border border-slate-300 px-3 py-2 text-base focus:ring-2 focus:ring-blue-500 outline-none"
+                                        className="w-full rounded-lg border border-slate-300 px-3 py-2 text-base focus:ring-2 focus:ring-blue-500 outline-none"
                                     />
                                     <button
                                         type="button"
-                                        className="rounded-lg bg-blue-600 text-white px-3 py-2 text-sm hover:bg-blue-700"
+                                        className="absolute right-2 top-1/2 -translate-y-1/2 rounded-lg bg-blue-600 text-white px-3 py-1 text-sm hover:bg-blue-700"
                                         onClick={() => addTypedTags(tagsInput)}
                                     >
                                         Add
                                     </button>
-                                </div>
 
-                                {/* Selected tags */}
-                                {selectedTags.length > 0 && (
-                                    <div className="mt-3 flex flex-row flex-wrap gap-2">
-                                        {selectedTags.map((t) => (
-                                            <span key={t} className="inline-flex items-center gap-2 px-2 py-1 rounded-full border border-slate-300 bg-white text-sm">
-                                                {t}
-                                                <button
-                                                    type="button"
-                                                    className="text-slate-500 hover:text-slate-700"
-                                                    onClick={() => removeSelectedTag(t)}
-                                                    aria-label={`Remove tag ${t}`}
-                                                >
-                                                    ×
-                                                </button>
-                                            </span>
-                                        ))}
-                                    </div>
-                                )}
+                                    {/* Suggestions dropdown */}
+                                    {!tagsLoading && tagsInput.trim().length > 0 && (
+                                        (() => {
+                                            const q = tagsInput.trim().toLowerCase();
+                                            const suggestions = availableTags
+                                                .map((t) => ({ id: t.tag_id, name: (t.name || '').toString() }))
+                                                .filter((t) => t.name.toLowerCase().includes(q) && !selectedTags.includes(t.name.toLowerCase()));
+                                            if (suggestions.length === 0) return null;
+                                            return (
+                                                <ul className="absolute z-20 mt-2 w-full max-h-52 overflow-auto rounded-md border bg-white shadow">
+                                                    {suggestions.map((s) => (
+                                                        <li
+                                                            key={s.id}
+                                                            className="px-3 py-2 hover:bg-slate-100 cursor-pointer text-sm"
+                                                            onClick={() => {
+                                                                const name = s.name.toLowerCase();
+                                                                setSelectedTags((prev) => prev.includes(name) ? prev : [...prev, name]);
+                                                                setTagsInput("");
+                                                            }}
+                                                        >
+                                                            {s.name}
+                                                        </li>
+                                                    ))}
+                                                </ul>
+                                            );
+                                        })()
+                                    )}
+                                </div>
                             </div>
+
+                            {/* Selected tags */}
+                            {selectedTags.length > 0 && (
+                                <div className="mt-3 flex flex-row flex-wrap gap-2">
+                                    {selectedTags.map((t) => (
+                                        <span key={t} className="inline-flex items-center gap-2 px-2 py-1 rounded-full border border-slate-300 bg-white text-sm">
+                                            {t}
+                                            <button
+                                                type="button"
+                                                className="text-slate-500 hover:text-slate-700"
+                                                onClick={() => removeSelectedTag(t)}
+                                                aria-label={`Remove tag ${t}`}
+                                            >
+                                                ×
+                                            </button>
+                                        </span>
+                                    ))}
+                                </div>
+                            )}
                         </div>
-                        {/* Anonymous */}
+                        {/* Anonymous option */}
                         <div className="flex items-center gap-2">
                             <input
                                 id="anonymous"
