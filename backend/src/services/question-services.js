@@ -156,6 +156,17 @@ class QuestionService {
             const answersWithVotes = await Promise.all(
                 answers.map(async (answer) => {
                     const answerVoteCounts = await this.getVoteCounts(answer.answer_id);
+
+                    // Get all the answer's comments
+                    const [answerComments] = await pool.execute(
+                                            `SELECT a.answer_id, a.body, a.created_at,
+                                                    u.user_id, u.first_name, u.last_name
+                                            FROM Comment a
+                                            JOIN User u ON a.user_id = u.user_id
+                                            WHERE a.answer_id = ?
+                                            ORDER BY a.created_at ASC`,
+                                            [answer.answer_id]
+                                        );
                     return {
                         answerId: answer.answer_id,
                         content: answer.body,
@@ -168,7 +179,8 @@ class QuestionService {
                         userId: answer.user_id,
                         isAnonymous: Boolean(answer.is_anonymous),
                         upVotes: answerVoteCounts.upVotes,
-                        downVotes: answerVoteCounts.downVotes
+                        downVotes: answerVoteCounts.downVotes,
+                        comments: answerComments
                     };
                 })
             );
